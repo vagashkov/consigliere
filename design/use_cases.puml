@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+
+actor User
+actor "Knowledge Engineer" as KnowledgeEngineer
+actor Administrator
+
+rectangle "User Functions" {
+  User --> (ask for instructions)
+  User --> (ask question)
+}
+
+rectangle "Knowledge Engineer Functions" {
+  KnowledgeEngineer --> (list existing models)
+  KnowledgeEngineer --> (list active models)
+  KnowledgeEngineer --> (load model)
+  KnowledgeEngineer --> (unload model)
+  KnowledgeEngineer --> (upload new document)
+}
+
+rectangle "Administrator Functions" {
+  rectangle "Users Management" {
+    (create user)
+    (lock user)
+    (unlock user)
+    (delete user)
+  }
+
+  rectangle "Models Management" {
+    (pull model)
+    (delete model)
+  }
+
+  rectangle "Reporting" {
+    (Usage reporting)
+  }
+
+  Administrator --> (create user)
+  Administrator --> (lock user)
+  Administrator --> (unlock user)
+  Administrator --> (delete user)
+  Administrator --> (pull model)
+  Administrator --> (delete model)
+  Administrator --> (Usage reporting)
+}
+
+@enduml

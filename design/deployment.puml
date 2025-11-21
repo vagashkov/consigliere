@@ -1,0 +1,51 @@
+@startuml
+left to right direction
+
+node "External Network" as external {
+  [Telegram Client] as telegram
+}
+
+node "Internal Network" as internal {
+  [Web Client] as webclient
+}
+
+node "Application Layer" as app {
+  [API Gateway] as apigateway
+  [API Server] as apiserver
+  [LLM Inference Engine] as llm
+  [Celery Service] as celery
+}
+
+node "Data Layer" as data {
+  [Database Server] as database
+  [Redis Cache] as redis
+}
+
+' Connections
+webclient --> apigateway
+telegram --> apigateway
+apigateway --> apiserver
+apiserver --> llm
+apiserver --> database
+apiserver --> redis
+apiserver --> celery
+celery --> redis
+celery --> database
+llm --> database
+
+note right of apigateway
+  Single entry point for
+  all external clients
+end note
+
+note right of redis
+  Caching and
+  task queue storage
+end note
+
+note right of database
+  Structured data storage
+  (users, logs, etc.)
+end note
+
+@enduml
