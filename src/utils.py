@@ -4,7 +4,7 @@ from sys import stdout
 from fastapi import HTTPException
 from http import HTTPStatus
 
-from src.api.v1.app.config import Settings
+from src.config import Settings
 
 logger = logging.getLogger(__name__)
 

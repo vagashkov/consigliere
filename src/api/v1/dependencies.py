@@ -1,4 +1,4 @@
-from src.api.v1.app.services.service import (
+from src.core.services import (
     LLMService, OllamaLLMService
 )
 

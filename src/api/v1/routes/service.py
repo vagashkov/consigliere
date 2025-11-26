@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Depends
+from typing import List
 
 
-from src.api.v1.app.dependencies import LLMServiceDependency
-from src.api.v1.app.constants import HTTPMethod
-from src.api.v1.app.models.service import LLModelsList
-from src.api.v1.app.services.service import LLMService
+from src.api.v1.dependencies import LLMServiceDependency
+from src.constants import HTTPMethod
+from src.core.models import LLModelDTO
+from src.core.services import LLMService
 
 
 async def list_all_models(
         llm_service: LLMService = Depends(
             LLMServiceDependency.get_llm_service
         )
-) -> LLModelsList:
+) -> List[LLModelDTO]:
     """
     Returns all available LLMs (incl. aliases)
     :return:
@@ -24,7 +25,7 @@ async def list_active_models(
     llm_service: LLMService = Depends(
         LLMServiceDependency.get_llm_service
     )
-) -> LLModelsList:
+) -> List[LLModelDTO]:
     """
     Returns active LLMs (incl. aliases)
     :return:

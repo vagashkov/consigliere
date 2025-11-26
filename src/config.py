@@ -12,6 +12,14 @@ ENV_FILE_PATH = BASE_DIR / ".env"
 ENV_FILE_ENCODING = "utf-8"
 
 
+class LLMProviderType(str, Enum):
+    """
+    LLM provider selection class
+    """
+
+    OLLAMA = "ollama"
+
+
 class Environment(str, Enum):
     """
     Current environment selection class
@@ -38,9 +46,10 @@ class Settings(BaseSettings):
 
     APP_VERSION: str = "1.0"
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
-    OLLAMA_SCHEMA: str = "http"
-    OLLAMA_HOST: str = "localhost"
-    OLLAMA_PORT: int = 11434
+    LLM_PROVIDER_TYPE: LLMProviderType = "ollama"
+    LLM_PROVIDER_SCHEMA: str = "http"
+    LLM_PROVIDER_HOST: str = "localhost"
+    LLM_PROVIDER_PORT: int = 11434
 
     class Config:
         env_file = ENV_FILE_PATH
