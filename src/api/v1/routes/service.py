@@ -34,6 +34,36 @@ async def list_active_models(
     return await llm_service.list_models(active=True)
 
 
+async def pull_model(
+        model_name: str,
+        model_version: str,
+        llm_service: LLMService = Depends(
+            LLMServiceDependency.get_llm_service
+        )
+):
+    """
+    Initiate pulling of a model with specified name and version
+    :return:
+    """
+
+    return await llm_service.pull_model(model_name, model_version)
+
+
+async def delete_model(
+        model_name: str,
+        model_version: str,
+        llm_service: LLMService = Depends(
+            LLMServiceDependency.get_llm_service
+        )
+):
+    """
+    Initiate pulling of a model with specified name and version
+    :return:
+    """
+
+    return await llm_service.delete_model(model_name, model_version)
+
+
 router = APIRouter()
 
 router.add_api_route(
@@ -47,4 +77,16 @@ router.add_api_route(
     endpoint=list_active_models,
     methods=[HTTPMethod.GET],
     summary="Returns active LLMs only (incl. aliases)"
+)
+router.add_api_route(
+    "/models/pull/{model_name}/{model_version}",
+    endpoint=pull_model,
+    methods=[HTTPMethod.GET],
+    summary="Pulls a model with specified name and version"
+)
+router.add_api_route(
+    "/models/{model_name}/{model_version}",
+    endpoint=delete_model,
+    methods=[HTTPMethod.DELETE],
+    summary="Deletes a model with specified name and version"
 )

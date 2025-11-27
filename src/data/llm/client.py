@@ -12,3 +12,11 @@ class LLMClient(ABC):
     @abstractmethod
     async def list_models(self, active: bool = False) -> List[LLModelDTO]:
         pass
+
+    @abstractmethod
+    async def pull_model(self, model_name: str, model_version: str):
+        pass
+
+    @abstractmethod
+    async def delete_model(self, model_name: str, model_version: str):
+        pass

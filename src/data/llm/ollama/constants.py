@@ -8,3 +8,5 @@ BASE_URL = "{}://{}:{}".format(
 )
 LIST_ALL_MODELS_URL = "{}/api/tags".format(BASE_URL)
 LIST_ACTIVE_MODELS_URL = "{}/api/ps".format(BASE_URL)
+PULL_MODEL_URL = "{}/api/pull".format(BASE_URL)
+DELETE_MODEL_URL = "{}/api/delete".format(BASE_URL)

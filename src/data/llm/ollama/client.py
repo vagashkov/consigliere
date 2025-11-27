@@ -1,11 +1,14 @@
+from fastapi.responses import JSONResponse
 from httpx import AsyncClient, HTTPStatusError, RequestError
 from pydantic import TypeAdapter, ValidationError as PydanticError
 
+from src.constants import HTTPMethod
 from src.core.models import LLModelDTO
 from src.data.llm.client import LLMClient
 from src.data.llm.ollama.models import OllamaModelData
 from src.data.llm.ollama.constants import (
-    LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL
+    LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL,
+    PULL_MODEL_URL, DELETE_MODEL_URL
 )
 from src.utils import report_error
 
@@ -52,3 +55,52 @@ class OllamaClient(LLMClient):
                 }
             ) for model in ollama_list
         ]
+
+    async def pull_model(self, model_name: str, model_version: str):
+        """
+        Initiate model pulling by name and version.
+        :param model_name:
+        :param model_version:
+        :return:
+        """
+        try:
+            async with AsyncClient() as client:
+                response = await client.post(
+                    PULL_MODEL_URL,
+                    # timeout is big enough to load LLM into memory
+                    timeout=10.0,
+                    json={
+                        "model": "{}:{}".format(model_name, model_version)
+                    },
+                )
+                response.raise_for_status()
+            return JSONResponse(
+                content={}, status_code=201
+            )
+        except Exception as e:
+            report_error(str(e))
+
+    async def delete_model(self, model_name: str, model_version: str):
+        """
+        Initiate model deletion by name and version.
+        :param model_name:
+        :param model_version:
+        :return:
+        """
+        try:
+            async with AsyncClient() as client:
+                response = await client.request(
+                    HTTPMethod.DELETE,
+                    DELETE_MODEL_URL,
+                    # timeout is big enough to load LLM into memory
+                    timeout=10.0,
+                    json={
+                        "model": "{}:{}".format(model_name, model_version)
+                    },
+                )
+                response.raise_for_status()
+            return JSONResponse(
+                content={}, status_code=201
+            )
+        except Exception as e:
+            report_error(str(e))
