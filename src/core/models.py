@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
 
 class LLModelDTO(BaseModel):
@@ -18,3 +19,13 @@ class LLModelDTOList(BaseModel):
     LLM data transfer objects list
     """
     models: List[LLModelDTO]
+
+
+class ChatMessageDTO(BaseModel):
+    """
+    Single chat message
+    """
+    session_id: str
+    role: str
+    content: str
+    timestamp: Optional[datetime]
