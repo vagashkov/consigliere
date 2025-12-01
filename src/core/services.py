@@ -1,35 +1,17 @@
-from abc import ABC, abstractmethod
 from typing import List
 
-from src.data.llm.ollama.client import OllamaClient
+from src.dependencies import LLMClientDependency
 from src.core.models import LLModelDTO
 
 
-class LLMService(ABC):
+class LLMService:
     """
-    Abstract base class for LLM services.
-    """
-
-    @abstractmethod
-    async def list_models(self, active: bool = False) -> List[LLModelDTO]:
-        pass
-
-    @abstractmethod
-    async def pull_model(self, model_name: str, model_version: str):
-        pass
-
-    @abstractmethod
-    async def delete_model(self, model_name: str, model_version: str):
-        pass
-
-
-class OllamaLLMService(LLMService):
-    """
-    LLM service implementation for ollama inference engine.
+    LLM service implementation
     """
 
     def __init__(self):
-        self.client = OllamaClient()
+        super().__init__()
+        self.client = LLMClientDependency.get_llm_client()
 
     async def list_models(self, active: bool = False) -> List[LLModelDTO]:
         """

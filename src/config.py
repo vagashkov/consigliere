@@ -5,19 +5,13 @@ from typing import final
 
 from pydantic_settings import BaseSettings
 
+from src.constants import LLMProviderType
+
 
 # Build path inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 ENV_FILE_PATH = BASE_DIR / ".env"
 ENV_FILE_ENCODING = "utf-8"
-
-
-class LLMProviderType(str, Enum):
-    """
-    LLM provider selection class
-    """
-
-    OLLAMA = "ollama"
 
 
 class Environment(str, Enum):
@@ -59,7 +53,21 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings()
+    """
+    Global settings access point with caching support
+    :return:
+    """
+    try:
+        return Settings()
+    except Exception as e:
+        if ENV_FILE_PATH.exists():
+            raise RuntimeError(
+                "Failed to read .env file"
+            ) from e
+        else:
+            raise RuntimeError(
+                ".env file doesn't exist"
+            ) from e
 
 
 settings = get_settings()

@@ -1,67 +1,52 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from typing import List
 
 
-from src.api.v1.dependencies import LLMServiceDependency
 from src.constants import HTTPMethod
 from src.core.models import LLModelDTO
 from src.core.services import LLMService
 
 
-async def list_all_models(
-        llm_service: LLMService = Depends(
-            LLMServiceDependency.get_llm_service
-        )
-) -> List[LLModelDTO]:
+async def list_all_models() -> List[LLModelDTO]:
     """
     Returns all available LLMs (incl. aliases)
     :return:
     """
 
-    return await llm_service.list_models()
+    return await LLMService().list_models()
 
 
-async def list_active_models(
-    llm_service: LLMService = Depends(
-        LLMServiceDependency.get_llm_service
-    )
-) -> List[LLModelDTO]:
+async def list_active_models() -> List[LLModelDTO]:
     """
     Returns active LLMs (incl. aliases)
     :return:
     """
 
-    return await llm_service.list_models(active=True)
+    return await LLMService().list_models(active=True)
 
 
 async def pull_model(
         model_name: str,
-        model_version: str,
-        llm_service: LLMService = Depends(
-            LLMServiceDependency.get_llm_service
-        )
+        model_version: str
 ):
     """
     Initiate pulling of a model with specified name and version
     :return:
     """
 
-    return await llm_service.pull_model(model_name, model_version)
+    return await LLMService().pull_model(model_name, model_version)
 
 
 async def delete_model(
         model_name: str,
-        model_version: str,
-        llm_service: LLMService = Depends(
-            LLMServiceDependency.get_llm_service
-        )
+        model_version: str
 ):
     """
     Initiate pulling of a model with specified name and version
     :return:
     """
 
-    return await llm_service.delete_model(model_name, model_version)
+    return await LLMService().delete_model(model_name, model_version)
 
 
 router = APIRouter()
