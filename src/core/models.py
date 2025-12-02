@@ -21,6 +21,22 @@ class LLModelDTOList(BaseModel):
     models: List[LLModelDTO]
 
 
+class ChatRequestDTO(BaseModel):
+    """
+    Chat request data transfer object
+    """
+    session_id: str
+    content: str
+
+
+class ChatResponseDTO(BaseModel):
+    """
+    Chat response data transfer object
+    """
+    session_id: str
+    content: str
+
+
 class ChatMessageDTO(BaseModel):
     """
     Single chat message

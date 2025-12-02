@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.api.v1.routes.service import router as service_router
+from src.api.v1.routes.chat import router as chat_router
 
 app = FastAPI(title="Consigliere API")
 
@@ -18,6 +19,11 @@ app.add_middleware(
 app.include_router(
     service_router,
     prefix="/api/v1/service"
+)
+
+app.include_router(
+    chat_router,
+    prefix="/api/v1/chat"
 )
 
 

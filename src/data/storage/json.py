@@ -35,7 +35,7 @@ class JSONStorage(Storage):
         """
         return Path(self.data_path) / "{}.json".format(session_id)
 
-    async def save_chat_message(self, message: ChatMessageDTO) -> None:
+    async def save_message(self, message: ChatMessageDTO) -> None:
         """
         Save single message into session-related JSON file
         """
@@ -43,11 +43,12 @@ class JSONStorage(Storage):
 
         # Load existing messages
         messages = []
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                messages = load(f)
-        except OSError as e:
-            report_error(str(e))
+        if file_path.exists():
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    messages = load(f)
+            except OSError as e:
+                report_error(str(e))
 
         # Append new message
         messages.append(message.dict())
@@ -55,7 +56,7 @@ class JSONStorage(Storage):
         # Load messages back into JSON file
         try:
             with open(file_path, "w", encoding="utf-8") as f:
-                dump(messages, f, ensure_ascii=False, indent=2)
+                dump(messages, f, ensure_ascii=False, indent=2, default=str)
         except OSError as e:
             report_error(str(e))
 

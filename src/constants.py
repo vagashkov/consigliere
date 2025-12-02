@@ -15,3 +15,22 @@ class LLMProviderType(str, Enum):
 
     OLLAMA = "ollama"
     OPENAI = "OpenAI"
+
+
+class StorageType(str, Enum):
+    """
+    Data storage selection class
+    """
+
+    JSON = "json"
+    SQLITE = "sqlite"
+    POSTGRES = "postgres"
+
+
+class ChatRole(str, Enum):
+    """
+    Chat role election class
+    """
+
+    USER = "user"
+    SYSTEM = "system"

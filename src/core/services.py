@@ -1,6 +1,6 @@
 from typing import List
 
-from src.dependencies import LLMClientDependency
+from src.dependencies import get_llm_client
 from src.core.models import LLModelDTO
 
 
@@ -11,7 +11,7 @@ class LLMService:
 
     def __init__(self):
         super().__init__()
-        self.client = LLMClientDependency.get_llm_client()
+        self.client = get_llm_client()
 
     async def list_models(self, active: bool = False) -> List[LLModelDTO]:
         """
@@ -38,3 +38,11 @@ class LLMService:
         :return:
         """
         return await self.client.delete_model(model_name, model_version)
+
+    async def generate(self, prompt: str) -> str:
+        """
+        Prompt the model with user input.
+        :param prompt:
+        :return:
+        """
+        return await self.client.generate(prompt)

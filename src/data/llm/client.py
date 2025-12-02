@@ -20,3 +20,7 @@ class LLMClient(ABC):
     @abstractmethod
     async def delete_model(self, model_name: str, model_version: str):
         pass
+
+    @abstractmethod
+    async def generate(self, prompt: str):
+        pass

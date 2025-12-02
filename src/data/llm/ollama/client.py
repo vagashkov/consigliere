@@ -1,14 +1,17 @@
+from json import loads, JSONDecodeError
+
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient, HTTPStatusError, RequestError
 from pydantic import TypeAdapter, ValidationError as PydanticError
 
 from src.constants import HTTPMethod
+from src.config import settings
 from src.core.models import LLModelDTO
 from src.data.llm.client import LLMClient
 from src.data.llm.ollama.models import OllamaModelData
 from src.data.llm.ollama.constants import (
     LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL,
-    PULL_MODEL_URL, DELETE_MODEL_URL
+    PULL_MODEL_URL, DELETE_MODEL_URL, MODEL_GENERATE_URL
 )
 from src.utils import report_error
 
@@ -104,3 +107,53 @@ class OllamaClient(LLMClient):
             )
         except Exception as e:
             report_error(str(e))
+
+    async def generate(self, prompt: str) -> str:
+        """
+        Generate text for specified prompt using LLM.
+        :param prompt:
+        :return:
+        """
+        # Getting models list from inference engine
+        try:
+            async with AsyncClient() as client:
+                response = await client.post(
+                    MODEL_GENERATE_URL,
+                    # timeout is big enough to load LLM into memory
+                    timeout=100.0,
+                    json={
+                        "model": "{}:{}".format(
+                            settings.LLM_MODEL_NAME,
+                            settings.LLM_MODEL_VERSION
+                        ),
+                        "prompt": prompt,
+                        "stream": True
+                    },
+                )
+
+                full_text = ""
+
+                # Split the response text into lines and process each one
+                for line in response.text.split("\n"):
+                    # Empty line
+                    if not line.strip():
+                        continue
+
+                    # Got some answer chunk - let's analyze it
+                    try:
+                        # Concise answer part
+                        data = loads(line)
+                        if "response" in data:
+                            full_text += data["response"].strip()
+                    except JSONDecodeError:
+                        # Some gibberish - skip it
+                        continue
+        except HTTPStatusError as e:
+            report_error(str(e))
+        except RequestError as e:
+            report_error(str(e))
+        except Exception as e:
+            report_error(str(e))
+
+        # Return result
+        return full_text

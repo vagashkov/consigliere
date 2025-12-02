@@ -10,7 +10,7 @@ from src.constants import LLMProviderType
 
 # Build path inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
-ENV_FILE_PATH = BASE_DIR / ".env"
+ENV_FILE_PATH = BASE_DIR.parent / ".env"
 ENV_FILE_ENCODING = "utf-8"
 
 
@@ -45,10 +45,22 @@ class Settings(BaseSettings):
     LLM_PROVIDER_HOST: str = "localhost"
     LLM_PROVIDER_PORT: int = 11434
 
+    LLM_MODEL_NAME: str = "llama3.1"
+    LLM_MODEL_VERSION: str = "8b"
+
+    STORAGE_TYPE: str = "json"
+    DATA_PATH: str = ""
+
     class Config:
         env_file = ENV_FILE_PATH
         env_file_encoding = ENV_FILE_ENCODING
+        case_sensitive = True
         extra = "ignore"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.DATA_PATH:
+            self.DATA_PATH = BASE_DIR.parent / "data"
 
 
 @lru_cache()
@@ -57,6 +69,7 @@ def get_settings() -> Settings:
     Global settings access point with caching support
     :return:
     """
+
     try:
         return Settings()
     except Exception as e:
