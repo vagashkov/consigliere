@@ -4,7 +4,7 @@ from typing import List
 
 from src.constants import HTTPMethod
 from src.core.models import LLModelDTO
-from src.core.services import LLMService
+from src.core.services.llm import LLMService
 
 
 async def list_all_models() -> List[LLModelDTO]:

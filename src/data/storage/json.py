@@ -21,11 +21,13 @@ class JSONStorage(Storage):
         - save data path location for farther usage
         :param data_path:
         """
+        storage_path = Path(data_path) / "dialogs"
+
         try:
-            makedirs(data_path, exist_ok=True)
+            makedirs(storage_path, exist_ok=True)
         except OSError as e:
             report_error(str(e))
-        self.data_path = data_path
+        self.storage_path = storage_path
 
     def _get_session_file(self, session_id: str) -> Path:
         """
@@ -33,7 +35,7 @@ class JSONStorage(Storage):
         :param session_id:
         :return:
         """
-        return Path(self.data_path) / "{}.json".format(session_id)
+        return self.storage_path / "{}.json".format(session_id)
 
     async def save_message(self, message: ChatMessageDTO) -> None:
         """
@@ -111,7 +113,7 @@ class JSONStorage(Storage):
             # Remove .json
             filename[:-5]
             # From every file id data_path directory
-            for filename in listdir(self.data_path)
+            for filename in listdir(self.storage_path)
             # With .json extension
             if filename.endswith(".json")
         ]

@@ -45,8 +45,11 @@ class Settings(BaseSettings):
     LLM_PROVIDER_HOST: str = "localhost"
     LLM_PROVIDER_PORT: int = 11434
 
-    LLM_MODEL_NAME: str = "llama3.1"
-    LLM_MODEL_VERSION: str = "8b"
+    EMBEDDING_MODEL_NAME: str = "nomic-embed-text"
+    EMBEDDING_MODEL_VERSION: str = "latest"
+    GENERATING_MODEL_NAME: str = "gemma3"
+    GENERATING_MODEL_VERSION: str = "270m"
+    GENERATING_MODEL_TEMPERATURE: float = 0.7
 
     STORAGE_TYPE: str = "json"
     DATA_PATH: str = ""

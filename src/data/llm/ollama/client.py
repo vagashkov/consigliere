@@ -123,9 +123,10 @@ class OllamaClient(LLMClient):
                     timeout=100.0,
                     json={
                         "model": "{}:{}".format(
-                            settings.LLM_MODEL_NAME,
-                            settings.LLM_MODEL_VERSION
+                            settings.GENERATING_MODEL_NAME,
+                            settings.GENERATING_MODEL_VERSION
                         ),
+                        "temperature": settings.GENERATING_MODEL_TEMPERATURE,  # "top_k": 40, "top_p": 0.9, "repeat_penalty": 1.1, "stop": ["\n\n
                         "prompt": prompt,
                         "stream": True
                     },
