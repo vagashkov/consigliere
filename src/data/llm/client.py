@@ -22,5 +22,5 @@ class LLMClient(ABC):
         pass
 
     @abstractmethod
-    async def generate(self, prompt: str):
+    async def generate(self, session_id: str, prompt: str):
         pass

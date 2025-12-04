@@ -51,8 +51,13 @@ class Settings(BaseSettings):
     GENERATING_MODEL_VERSION: str = "270m"
     GENERATING_MODEL_TEMPERATURE: float = 0.7
 
+    DATA_PATH: Path = ""
+
     STORAGE_TYPE: str = "json"
-    DATA_PATH: str = ""
+
+    KNOWLEDGE_BASE_TYPE: str = "raw_text"
+    KNOWLEDGE_BASE_PATH: Path = ""
+    SYSTEM_PROMPT_FILE: Path = ""
 
     class Config:
         env_file = ENV_FILE_PATH
@@ -62,8 +67,11 @@ class Settings(BaseSettings):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if not self.DATA_PATH:
-            self.DATA_PATH = BASE_DIR.parent / "data"
+        self.DATA_PATH = BASE_DIR.parent / "data"
+        self.KNOWLEDGE_BASE_PATH = self.DATA_PATH / "knowledge"
+        self.SYSTEM_PROMPT_FILE = (
+                self.KNOWLEDGE_BASE_PATH / "system_prompt.txt"
+        )
 
 
 @lru_cache()

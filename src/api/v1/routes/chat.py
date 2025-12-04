@@ -39,7 +39,8 @@ async def chat_message(
 
     # Forward request to LLM
     response_text = await LLMService().generate(
-       request.content
+        request.session_id,
+        request.content,
     )
 
     try:

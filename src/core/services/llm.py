@@ -39,10 +39,12 @@ class LLMService:
         """
         return await self.client.delete_model(model_name, model_version)
 
-    async def generate(self, prompt: str) -> str:
+    async def generate(self, session_id: str, prompt: str) -> str:
         """
         Prompt the model with user input.
+        :param session_id:
         :param prompt:
         :return:
         """
-        return await self.client.generate(prompt)
+
+        return await self.client.generate(session_id, prompt)

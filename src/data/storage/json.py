@@ -14,7 +14,7 @@ class JSONStorage(Storage):
     JSON file-based storage
     """
 
-    def __init__(self, data_path: str):
+    def __init__(self, data_path: Path):
         """
         Storage initialization:
         - create directory if it doesn't exist
@@ -89,7 +89,7 @@ class JSONStorage(Storage):
                 role=item.get("role"),
                 content=item.get("content"),
                 timestamp=datetime.fromisoformat(
-                    item.get(["timestamp"])
+                    item.get("timestamp")
                 )
             )
             for item

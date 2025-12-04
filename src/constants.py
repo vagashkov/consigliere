@@ -34,3 +34,11 @@ class ChatRole(str, Enum):
 
     USER = "user"
     SYSTEM = "system"
+
+
+class KnowledgeBaseType(str, Enum):
+    """
+    Knowledge base type selection class
+    """
+
+    RAW_TEXT = "raw_text"

@@ -3,16 +3,19 @@ from json import loads, JSONDecodeError
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient, HTTPStatusError, RequestError
 from pydantic import TypeAdapter, ValidationError as PydanticError
+from typing import List, Dict
 
-from src.constants import HTTPMethod
+from src.constants import HTTPMethod, ChatRole
 from src.config import settings
 from src.core.models import LLModelDTO
+
 from src.data.llm.client import LLMClient
 from src.data.llm.ollama.models import OllamaModelData
 from src.data.llm.ollama.constants import (
     LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL,
     PULL_MODEL_URL, DELETE_MODEL_URL, MODEL_GENERATE_URL
 )
+from src.data.storage.json import JSONStorage
 from src.utils import report_error
 
 
@@ -108,12 +111,45 @@ class OllamaClient(LLMClient):
         except Exception as e:
             report_error(str(e))
 
-    async def generate(self, prompt: str) -> str:
+    async def _get_system_prompt(self) -> str:
+        """
+        Reads system prompt from file
+        :return:
+        """
+
+        # Obtain system prompt
+        try:
+            with open(settings.SYSTEM_PROMPT_FILE, "r") as file:
+                return file.read()
+        except FileNotFoundError:
+            report_error("System prompt file not found.")
+            return ""
+
+    async def _build_chat_history(self, session_id: str) -> List[Dict]:
+        if session_id:
+            saved_messages = await JSONStorage(
+                settings.DATA_PATH
+            ).get_messages(session_id)
+            return [
+                {
+                    "role": message.role,
+                    "content": message.content
+                }
+                for message in saved_messages
+            ]
+        else:
+            return []
+
+    async def generate(self, session_id: str, prompt: str) -> str:
         """
         Generate text for specified prompt using LLM.
+        :param session_id:
         :param prompt:
         :return:
         """
+        chat_history = list()
+        chat_history.extend(await self._build_chat_history(session_id))
+
         # Getting models list from inference engine
         try:
             async with AsyncClient() as client:
@@ -126,10 +162,11 @@ class OllamaClient(LLMClient):
                             settings.GENERATING_MODEL_NAME,
                             settings.GENERATING_MODEL_VERSION
                         ),
-                        "temperature": settings.GENERATING_MODEL_TEMPERATURE,  # "top_k": 40, "top_p": 0.9, "repeat_penalty": 1.1, "stop": ["\n\n
+                        "temperature": settings.GENERATING_MODEL_TEMPERATURE,
                         "prompt": prompt,
+                        ChatRole.SYSTEM.value: await self._get_system_prompt(),
                         "stream": True
-                    },
+                    }
                 )
 
                 full_text = ""
@@ -145,7 +182,7 @@ class OllamaClient(LLMClient):
                         # Concise answer part
                         data = loads(line)
                         if "response" in data:
-                            full_text += data["response"].strip()
+                            full_text += data["response"]
                     except JSONDecodeError:
                         # Some gibberish - skip it
                         continue
