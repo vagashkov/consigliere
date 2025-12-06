@@ -68,10 +68,8 @@ class Settings(BaseSettings):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.DATA_PATH = BASE_DIR.parent / "data"
+        self.SYSTEM_PROMPT_FILE = self.DATA_PATH / "system_prompt.txt"
         self.KNOWLEDGE_BASE_PATH = self.DATA_PATH / "knowledge"
-        self.SYSTEM_PROMPT_FILE = (
-                self.KNOWLEDGE_BASE_PATH / "system_prompt.txt"
-        )
 
 
 @lru_cache()

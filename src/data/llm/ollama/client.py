@@ -1,5 +1,3 @@
-from json import loads, JSONDecodeError
-
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient, HTTPStatusError, RequestError
 from pydantic import TypeAdapter, ValidationError as PydanticError
@@ -13,9 +11,10 @@ from src.data.llm.client import LLMClient
 from src.data.llm.ollama.models import OllamaModelData
 from src.data.llm.ollama.constants import (
     LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL,
-    PULL_MODEL_URL, DELETE_MODEL_URL, MODEL_GENERATE_URL
+    PULL_MODEL_URL, DELETE_MODEL_URL, MODEL_CHAT_URL
 )
 from src.data.storage.json import JSONStorage
+from src.data.storage.knowledge.raw_text import RawTextLoader
 from src.utils import report_error
 
 
@@ -111,19 +110,38 @@ class OllamaClient(LLMClient):
         except Exception as e:
             report_error(str(e))
 
-    async def _get_system_prompt(self) -> str:
+    async def _get_knowledge_base(self) -> str:
+        """
+        Reads knowledge base from file
+        :return:
+        """
+
+        return RawTextLoader(
+            settings.KNOWLEDGE_BASE_PATH
+        ).load_knowledge_base()
+
+    async def _get_system_prompt(self) -> dict:
         """
         Reads system prompt from file
         :return:
         """
 
+        knowledge_base = await self._get_knowledge_base()
+        system_prompt = "Knowledge base: {}".format(
+            knowledge_base
+            ) if knowledge_base else ""
+
         # Obtain system prompt
         try:
             with open(settings.SYSTEM_PROMPT_FILE, "r") as file:
-                return file.read()
+                system_prompt += file.read()
+                return {
+                    "role": ChatRole.SYSTEM.value,
+                    "content": system_prompt
+                }
         except FileNotFoundError:
             report_error("System prompt file not found.")
-            return ""
+            return {}
 
     async def _build_chat_history(self, session_id: str) -> List[Dict]:
         if session_id:
@@ -148,13 +166,14 @@ class OllamaClient(LLMClient):
         :return:
         """
         chat_history = list()
+        chat_history.append(await self._get_system_prompt())
         chat_history.extend(await self._build_chat_history(session_id))
 
         # Getting models list from inference engine
         try:
             async with AsyncClient() as client:
                 response = await client.post(
-                    MODEL_GENERATE_URL,
+                    MODEL_CHAT_URL,
                     # timeout is big enough to load LLM into memory
                     timeout=100.0,
                     json={
@@ -163,29 +182,10 @@ class OllamaClient(LLMClient):
                             settings.GENERATING_MODEL_VERSION
                         ),
                         "temperature": settings.GENERATING_MODEL_TEMPERATURE,
-                        "prompt": prompt,
-                        ChatRole.SYSTEM.value: await self._get_system_prompt(),
-                        "stream": True
+                        "messages": chat_history,
+                        "stream": False
                     }
                 )
-
-                full_text = ""
-
-                # Split the response text into lines and process each one
-                for line in response.text.split("\n"):
-                    # Empty line
-                    if not line.strip():
-                        continue
-
-                    # Got some answer chunk - let's analyze it
-                    try:
-                        # Concise answer part
-                        data = loads(line)
-                        if "response" in data:
-                            full_text += data["response"]
-                    except JSONDecodeError:
-                        # Some gibberish - skip it
-                        continue
         except HTTPStatusError as e:
             report_error(str(e))
         except RequestError as e:
@@ -194,4 +194,4 @@ class OllamaClient(LLMClient):
             report_error(str(e))
 
         # Return result
-        return full_text
+        return response.json().get("message").get("content")

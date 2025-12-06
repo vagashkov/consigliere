@@ -42,7 +42,6 @@ class RawTextLoader(KnowledgeBaseLoader):
 
         if documents:
             files_content = "\n\n---\n\n".join(documents)
-            print(f"Loaded {len(documents)} knowledge documents")
             return files_content
         else:
             print("No knowledge documents found")
