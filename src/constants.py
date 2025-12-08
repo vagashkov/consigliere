@@ -42,3 +42,11 @@ class KnowledgeBaseType(str, Enum):
     """
 
     RAW_TEXT = "raw_text"
+
+
+class Language(str, Enum):
+    """
+    Language selection class
+    """
+    RU = "ru"
+    EN = "en"

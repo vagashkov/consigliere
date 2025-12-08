@@ -13,8 +13,7 @@ from src.data.llm.ollama.constants import (
     LIST_ALL_MODELS_URL, LIST_ACTIVE_MODELS_URL,
     PULL_MODEL_URL, DELETE_MODEL_URL, MODEL_CHAT_URL
 )
-from src.data.storage.json import JSONStorage
-from src.data.storage.knowledge.raw_text import RawTextLoader
+import src.dependencies as dependencies
 from src.utils import report_error
 
 
@@ -116,9 +115,7 @@ class OllamaClient(LLMClient):
         :return:
         """
 
-        return RawTextLoader(
-            settings.KNOWLEDGE_BASE_PATH
-        ).load_knowledge_base()
+        return dependencies.get_knowledge_base_loader().load_knowledge_base()
 
     async def _get_system_prompt(self) -> dict:
         """
@@ -145,9 +142,9 @@ class OllamaClient(LLMClient):
 
     async def _build_chat_history(self, session_id: str) -> List[Dict]:
         if session_id:
-            saved_messages = await JSONStorage(
-                settings.DATA_PATH
-            ).get_messages(session_id)
+            saved_messages = (
+                await dependencies.get_data_storage().get_messages(session_id)
+            )
             return [
                 {
                     "role": message.role,

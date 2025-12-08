@@ -2,6 +2,7 @@ from typing import List
 
 from src.dependencies import get_llm_client
 from src.core.models import LLModelDTO
+from src.core.services.validator import PromptValidatorService
 
 
 class LLMService:
@@ -47,4 +48,7 @@ class LLMService:
         :return:
         """
 
-        return await self.client.generate(session_id, prompt)
+        if not await PromptValidatorService().validate_prompt(prompt):
+            return await self.client.generate(session_id, prompt)
+
+        return "Prompt validation error"
