@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 from src.constants import Language
 
@@ -6,6 +6,7 @@ from src.constants import Language
 class Patterns(TypedDict):
     language: Language
     patterns: list[str]
+    description: Optional[str]
 
 
 # Injections
@@ -25,7 +26,8 @@ injections_en: Patterns = {
         r"roleplay\s+as",
         r"translate\s+everything\s+to",
         r"respond\s+in\s+(chinese|chinese|arabic|korean)"
-    ]
+    ],
+    "description": "Injection (en)"
 }
 
 injections_ru: Patterns = {
@@ -37,7 +39,8 @@ injections_ru: Patterns = {
         r"новые\s+инструкции",
         r"игнорируй\s+(предыдущ|всё|выше)",
         r"забудь\s+(предыдущ|всё|выше)",
-        ]
+        ],
+    "description": "Injection (ru)"
     }
 
 # Remote Code Execution
@@ -59,7 +62,8 @@ rce_en: Patterns = {
             r"execute\s+command",
             r"run\s+command",
             r"shell\s+command",
-        ]
+        ],
+    "description": "Remote Code Execution (en)"
 }
 
 rce_ru: Patterns = {
@@ -67,7 +71,8 @@ rce_ru: Patterns = {
     "patterns": [
             r"выполни\s+команду",
             r"запусти\s+скрипт",
-        ]
+        ],
+    "description": "Remote Code Execution (ru)"
 }
 
 recon_en: Patterns = {
@@ -79,7 +84,8 @@ recon_en: Patterns = {
         r"what\s+is\s+your\s+system\s+prompt",
         r"dump\s+(your\s+)?(memory|context|instructions)",
         r"print\s+(your\s+)?(instructions|prompt)",
-    ]
+    ],
+    "description": "Reconnaissance (en)"
 }
 
 recon_ru: Patterns = {
@@ -90,7 +96,8 @@ recon_ru: Patterns = {
         r"твой\s+api\s+ключ",
         r"покажи\s+(свой\s+)?(конфиг|настройки|промпт)",
         r"какой\s+твой\s+системный\s+промпт",
-    ]
+    ],
+    "description": "Reconnaissance (ru)"
 }
 
 spam_en: Patterns = {
@@ -100,16 +107,18 @@ spam_en: Patterns = {
         r"(test\s*){5,}",  # "test" repeated 5+ times
         r"^[a-z]{50,}$",  # 50+ lowercase letters without spaces
         r"^[A-Z]{50,}$",  # 50+ uppercase letters without spaces
-    ]
+    ],
+    "description": "Spam (en)"
 }
 
 spam_ru: Patterns = {
     "language": Language.RU,
     "patterns": [
-        r"(тест\s*){5,}",  # "test" repeated 5+ times
+        r"(тест\s*){5,}",  # "тест" repeated 5+ times
         r"^[а-я]{50,}$",  # 50+ lowercase letters without spaces
         r"^[А-Я]{50,}$",  # 50+ uppercase letters without spaces
-    ]
+    ],
+    "description": "Spam (ru)"
 }
 
 token_exhaustion_en: Patterns = {
@@ -118,7 +127,8 @@ token_exhaustion_en: Patterns = {
         r"write\s+(a\s+)?(story|essay|text)\s+(of\s+)?\d{3,}\s+(words|characters)",  # noqa: E501
         r"generate\s+\d{3,}\s+(words|characters|lines)",
         r"repeat\s+.+\s+\d{3,}\s+times",
-        ]
+        ],
+    "description": "Token Exhaustion (en)"
 }
 
 token_exhaustion_ru: Patterns = {
@@ -127,7 +137,8 @@ token_exhaustion_ru: Patterns = {
         r"напиши\s+(рассказ|историю|текст|эссе)\s+на\s+\d{3,}\s+(слов|символов)",  # noqa: E501
         r"сгенерируй\s+\d{3,}\s+(слов|символов|строк)",
         r"повтори\s+.+\s+\d{3,}\s+раз",
-        ]
+        ],
+    "description": "Token Exhaustion (ru)"
 }
 
 all_patterns = [

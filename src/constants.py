@@ -50,3 +50,9 @@ class Language(str, Enum):
     """
     RU = "ru"
     EN = "en"
+
+
+MAX_PROMPT_LENGTH = 2000
+MAX_REQUESTS_PER_MINUTE = 10
+MAX_REQUESTS_PER_HOUR = 2
+MAX_REQUESTS_PER_DAY = 1000

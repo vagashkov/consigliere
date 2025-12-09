@@ -2,7 +2,7 @@ from typing import List
 
 from src.dependencies import get_llm_client
 from src.core.models import LLModelDTO
-from src.core.services.validator import PromptValidatorService
+from src.core.services.validator import prompt_validator
 
 
 class LLMService:
@@ -48,7 +48,20 @@ class LLMService:
         :return:
         """
 
-        if not await PromptValidatorService().validate_prompt(prompt):
-            return await self.client.generate(session_id, prompt)
+        # Check if session rate limit exceeded
+        (
+            validation_failed, description
+        ) = prompt_validator.check_rate_limit(session_id)
 
-        return "Prompt validation error"
+        if validation_failed:
+            return "Rate limit exceeded: {}".format(description)
+
+        # Check prompt for maliciousness before sending it to the model
+        (
+            validation_failed, description
+        ) = prompt_validator.validate_prompt(prompt)
+
+        if validation_failed:
+            return "Prompt validation error: {}".format(description)
+
+        return await self.client.generate(session_id, prompt)
