@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.api.v1.routes.service import router as service_router
 from src.api.v1.routes.chat import router as chat_router
@@ -15,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(
     service_router,
@@ -33,6 +36,17 @@ async def health_check():
     Service availability endpoint.
     """
     return {"status": "healthy"}
+
+
+@app.get("/")
+async def index():
+    """
+    Index page endpoint.
+    """
+    return FileResponse(
+        "static/templates/index.html",
+        media_type="text/html"
+    )
 
 
 @app.exception_handler(HTTPException)
