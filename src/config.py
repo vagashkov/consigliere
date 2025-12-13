@@ -3,6 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import final
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 
 from src.constants import LLMProviderType
@@ -40,24 +41,38 @@ class Settings(BaseSettings):
 
     APP_VERSION: str = "1.0"
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
+
+    # LLM provider details
     LLM_PROVIDER_TYPE: LLMProviderType = "ollama"
     LLM_PROVIDER_SCHEMA: str = "http"
     LLM_PROVIDER_HOST: str = "localhost"
     LLM_PROVIDER_PORT: int = 11434
 
+    # Embedding LLM details
     EMBEDDING_MODEL_NAME: str = "nomic-embed-text"
     EMBEDDING_MODEL_VERSION: str = "latest"
+
+    # Generating LLM details
     GENERATING_MODEL_NAME: str = "gemma3"
     GENERATING_MODEL_VERSION: str = "270m"
     GENERATING_MODEL_TEMPERATURE: float = 0.7
 
     DATA_PATH: Path = ""
 
+    # Service data storage details
     STORAGE_TYPE: str = "json"
 
+    # Knowledge base configuration
     KNOWLEDGE_BASE_TYPE: str = "raw_text"
     KNOWLEDGE_BASE_PATH: Path = ""
     SYSTEM_PROMPT_FILE: Path = ""
+
+    # Client interaction channels configuration
+    # Telegram
+    USE_TELEGRAM: bool = False
+    TELEGRAM_TOKEN: SecretStr
+    TELEGRAM_WEBHOOK_URL: str = ""
+    DISABLE_PENDING_MESSAGES: bool = True
 
     class Config:
         env_file = ENV_FILE_PATH

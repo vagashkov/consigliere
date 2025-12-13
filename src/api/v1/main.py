@@ -1,13 +1,30 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from src.api.v1.routes.service import router as service_router
+from src.api.v1.routes.admin import router as admin_router
 from src.api.v1.routes.chat import router as chat_router
+from src.api.v1.routes.standard import router as standard_router
+from src.bots.telegram.main import bot, dp
+from src.config import get_settings
 
-app = FastAPI(title="Consigliere API")
+
+# Use webhook mode for Telegram bot
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    await bot.set_webhook(
+        url=get_settings().TELEGRAM_WEBHOOK_URL,
+        allowed_updates=dp.resolve_used_update_types(),
+        drop_pending_updates=True
+    )
+    yield
+    await bot.delete_webhook()
+
+app = FastAPI(title="Consigliere Web API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,34 +36,9 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.include_router(
-    service_router,
-    prefix="/api/v1/service"
-)
-
-app.include_router(
-    chat_router,
-    prefix="/api/v1/chat"
-)
-
-
-@app.get("/health")
-async def health_check():
-    """
-    Service availability endpoint.
-    """
-    return {"status": "healthy"}
-
-
-@app.get("/")
-async def index():
-    """
-    Index page endpoint.
-    """
-    return FileResponse(
-        "static/templates/index.html",
-        media_type="text/html"
-    )
+app.include_router(admin_router, prefix="/api/v1/admin")
+app.include_router(chat_router, prefix="/api/v1/chat")
+app.include_router(standard_router)
 
 
 @app.exception_handler(HTTPException)

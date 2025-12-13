@@ -16,7 +16,11 @@ def setup_logging(settings: Settings) -> None:
     :return:
     """
 
-    logging_level = logging.DEBUG if settings.DEBUG else logging.INFO
+    logging_level = (
+        logging.DEBUG
+        if settings.ENVIRONMENT.is_developed
+        else logging.INFO
+    )
     logging.basicConfig(
         level=logging_level,
         stream=stdout
