@@ -4,7 +4,7 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from src.config import get_settings
-from src.bots.telegram.commands import commands_router
+from src.bots.telegram.handlers import router
 
 config = get_settings()
 
@@ -25,5 +25,5 @@ dp = Dispatcher(storage=memory_storage)
 
 # Setup dispatcher routes
 main_router = Router()
-main_router.include_router(commands_router)
+main_router.include_router(router)
 dp.include_router(main_router)

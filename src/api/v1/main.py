@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from src.api.v1.routes.admin import router as admin_router
 from src.api.v1.routes.chat import router as chat_router
 from src.api.v1.routes.standard import router as standard_router
+from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
 
@@ -38,6 +39,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(admin_router, prefix="/api/v1/admin")
 app.include_router(chat_router, prefix="/api/v1/chat")
+app.include_router(webhooks_router, prefix="/api/v1/webhooks")
 app.include_router(standard_router)
 
 
