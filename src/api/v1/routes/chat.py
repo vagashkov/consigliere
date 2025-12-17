@@ -7,7 +7,7 @@ from src.core.models import (
     ChatRequestDTO, ChatResponseDTO, ChatMessageDTO
 )
 from src.core.services.llm import LLMService
-from src.data.storage.base import Storage
+from src.data.storage.dialogs.base import Storage
 from src.dependencies import get_data_storage
 from src.utils import report_error
 

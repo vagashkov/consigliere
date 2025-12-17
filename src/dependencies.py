@@ -5,8 +5,9 @@ from src.data.llm.client import LLMClient
 from src.data.llm.ollama.client import OllamaClient
 from src.data.llm.openai.client import OpenAIClient
 
-from src.data.storage.base import Storage
-from src.data.storage.json import JSONStorage
+from src.data.storage.dialogs.base import Storage
+from src.data.storage.dialogs.json import JSONStorage
+from src.data.storage.dialogs.memory import MemoryStorage
 
 from src.data.storage.knowledge.base import KnowledgeBaseLoader
 from src.data.storage.knowledge.raw_text import RawTextLoader
@@ -32,6 +33,8 @@ def get_data_storage() -> Storage:
     :return:
     """
     match settings.STORAGE_TYPE:
+        case StorageType.MEMORY:
+            return MemoryStorage()
         case StorageType.JSON:
             return JSONStorage(
                 settings.DATA_PATH

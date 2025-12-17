@@ -22,6 +22,7 @@ class StorageType(str, Enum):
     Data storage selection class
     """
 
+    MEMORY = "memory"
     JSON = "json"
     SQLITE = "sqlite"
     POSTGRES = "postgres"

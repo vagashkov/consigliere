@@ -57,6 +57,11 @@ class Settings(BaseSettings):
     GENERATING_MODEL_VERSION: str = "270m"
     GENERATING_MODEL_TEMPERATURE: float = 0.7
 
+    # Cache settings
+    REDIS_HOST: str = "redis://localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+
     DATA_PATH: Path = ""
 
     # Service data storage details

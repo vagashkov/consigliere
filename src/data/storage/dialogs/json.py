@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List
 
 from src.utils import report_error
-from src.data.storage.base import Storage
+from src.data.storage.dialogs.base import Storage
 from src.core.models import ChatMessageDTO
 
 

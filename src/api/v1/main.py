@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from redis import Redis
+
 from src.api.v1.routes.admin import router as admin_router
 from src.api.v1.routes.chat import router as chat_router
 from src.api.v1.routes.standard import router as standard_router
@@ -13,12 +15,14 @@ from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
 
+settings = get_settings()
+
 
 # Use webhook mode for Telegram bot
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     await bot.set_webhook(
-        url=get_settings().TELEGRAM_WEBHOOK_URL,
+        url=settings.TELEGRAM_WEBHOOK_URL,
         allowed_updates=dp.resolve_used_update_types(),
         drop_pending_updates=True
     )
