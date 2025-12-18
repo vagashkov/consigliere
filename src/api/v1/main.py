@@ -14,8 +14,10 @@ from src.api.v1.routes.standard import router as standard_router
 from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
+import src.dependencies as dependencies
 
 settings = get_settings()
+memory_storage = dependencies.get_data_storage()
 
 
 # Use webhook mode for Telegram bot
@@ -28,8 +30,15 @@ async def lifespan(application: FastAPI):
     )
     yield
     await bot.delete_webhook()
+    await memory_storage.save_all_sessions()
 
 app = FastAPI(title="Consigliere Web API", lifespan=lifespan)
+
+app.state.redis = Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB
+    )
 
 app.add_middleware(
     CORSMiddleware,

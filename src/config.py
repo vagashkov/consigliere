@@ -66,6 +66,7 @@ class Settings(BaseSettings):
 
     # Service data storage details
     STORAGE_TYPE: str = "json"
+    PERSISTENT_STORAGE_TYPE: str = "json"
 
     # Knowledge base configuration
     KNOWLEDGE_BASE_TYPE: str = "raw_text"

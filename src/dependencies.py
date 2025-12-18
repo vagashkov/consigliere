@@ -41,6 +41,18 @@ def get_data_storage() -> Storage:
             )
 
 
+def get_persistent_data_storage() -> Storage:
+    """
+    Get the LLM client according to the settings
+    :return:
+    """
+    match settings.PERSISTENT_STORAGE_TYPE:
+        case StorageType.JSON:
+            return JSONStorage(
+                settings.DATA_PATH
+            )
+
+
 def get_knowledge_base_loader() -> KnowledgeBaseLoader:
     """
     Get the knowledge base loader according to the settings

@@ -1,12 +1,13 @@
 from datetime import datetime
-from json import load, dump
+from json import load, loads, dump
 from os import listdir, makedirs, remove
 from pathlib import Path
 from typing import List
 
-from src.utils import report_error
-from src.data.storage.dialogs.base import Storage
+from src.api.v1 import main
 from src.core.models import ChatMessageDTO
+from src.data.storage.dialogs.base import Storage
+from src.utils import report_error
 
 
 class JSONStorage(Storage):
@@ -56,6 +57,26 @@ class JSONStorage(Storage):
         messages.append(message.dict())
 
         # Load messages back into JSON file
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                dump(messages, f, ensure_ascii=False, indent=2, default=str)
+        except OSError as e:
+            report_error(str(e))
+
+    async def save_session(self, session_id: str | bytes) -> None:
+        """
+        Save messages history into session-related JSON file
+        :param session_id:
+        :return:
+        """
+        file_name = str(session_id.decode("utf-8"))
+        file_path = self._get_session_file(file_name)
+
+        message_strings = main.app.state.redis.json().get(session_id)
+
+        messages = [loads(message) for message in message_strings]
+
+        # Load messages into JSON file
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 dump(messages, f, ensure_ascii=False, indent=2, default=str)

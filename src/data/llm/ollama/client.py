@@ -141,6 +141,12 @@ class OllamaClient(LLMClient):
             return {}
 
     async def _build_chat_history(self, session_id: str) -> List[Dict]:
+        """
+        Recreate chat history both from memory and persistent storage.
+        :param session_id:
+        :return:
+        """
+
         if session_id:
             saved_messages = (
                 await dependencies.get_data_storage().get_messages(session_id)
