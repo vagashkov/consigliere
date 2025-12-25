@@ -149,7 +149,9 @@ class OllamaClient(LLMClient):
 
         if session_id:
             saved_messages = (
-                await dependencies.get_data_storage().get_messages(session_id)
+                await dependencies.get_active_data_storage().get_messages(
+                    session_id
+                )
             )
             return [
                 {

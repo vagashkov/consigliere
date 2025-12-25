@@ -1,13 +1,16 @@
 from src.config import get_settings
-from src.constants import LLMProviderType, StorageType, KnowledgeBaseType
+from src.constants import (
+    LLMProviderType, KnowledgeBaseType,
+    ActiveStorageType, PersistentStorageType
+)
 
 from src.data.llm.client import LLMClient
 from src.data.llm.ollama.client import OllamaClient
 from src.data.llm.openai.client import OpenAIClient
 
-from src.data.storage.dialogs.base import Storage
-from src.data.storage.dialogs.json import JSONStorage
-from src.data.storage.dialogs.memory import MemoryStorage
+from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
+from src.data.storage.dialogs.active.redis import RedisStorage
+from src.data.storage.dialogs.persistent.json import JSONStorage
 
 from src.data.storage.knowledge.base import KnowledgeBaseLoader
 from src.data.storage.knowledge.raw_text import RawTextLoader
@@ -27,27 +30,26 @@ def get_llm_client() -> LLMClient:
             return OpenAIClient()
 
 
-def get_data_storage() -> Storage:
+def get_active_data_storage() -> ActiveStorage | None:
     """
     Get the LLM client according to the settings
     :return:
     """
-    match settings.STORAGE_TYPE:
-        case StorageType.MEMORY:
-            return MemoryStorage()
-        case StorageType.JSON:
-            return JSONStorage(
-                settings.DATA_PATH
-            )
+    match settings.ACTIVE_STORAGE_TYPE:
+        case ActiveStorageType.APP_STATE:
+            # TODO: Implement this case
+            return None
+        case ActiveStorageType.REDIS:
+            return RedisStorage()
 
 
-def get_persistent_data_storage() -> Storage:
+def get_persistent_data_storage() -> PersistentStorage:
     """
     Get the LLM client according to the settings
     :return:
     """
     match settings.PERSISTENT_STORAGE_TYPE:
-        case StorageType.JSON:
+        case PersistentStorageType.JSON:
             return JSONStorage(
                 settings.DATA_PATH
             )

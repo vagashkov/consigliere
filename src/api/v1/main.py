@@ -14,10 +14,12 @@ from src.api.v1.routes.standard import router as standard_router
 from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
+from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
 import src.dependencies as dependencies
 
 settings = get_settings()
-memory_storage = dependencies.get_data_storage()
+memory_storage: ActiveStorage = dependencies.get_active_data_storage()  # noqa: E501
+persistent_storage: PersistentStorage = dependencies.get_persistent_data_storage()  # noqa: E501
 
 
 # Use webhook mode for Telegram bot
@@ -30,7 +32,7 @@ async def lifespan(application: FastAPI):
     )
     yield
     await bot.delete_webhook()
-    await memory_storage.save_all_sessions()
+    await memory_storage.save_all_sessions(persistent_storage)
 
 app = FastAPI(title="Consigliere Web API", lifespan=lifespan)
 

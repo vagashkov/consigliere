@@ -57,6 +57,9 @@ class Settings(BaseSettings):
     GENERATING_MODEL_VERSION: str = "270m"
     GENERATING_MODEL_TEMPERATURE: float = 0.7
 
+    # Active data storage type
+    ACTIVE_STORAGE_TYPE: str = "app_state"
+
     # Cache settings
     REDIS_HOST: str = "redis://localhost"
     REDIS_PORT: int = 6379
@@ -65,7 +68,6 @@ class Settings(BaseSettings):
     DATA_PATH: Path = ""
 
     # Service data storage details
-    STORAGE_TYPE: str = "json"
     PERSISTENT_STORAGE_TYPE: str = "json"
 
     # Knowledge base configuration

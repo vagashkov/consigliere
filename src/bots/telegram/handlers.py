@@ -11,7 +11,7 @@ from src.bots.telegram.constants import HELP_TEXT
 from src.core.models import ChatMessageDTO
 from src.core.services.llm import LLMService
 from src.data.storage.dialogs.base import Storage
-from src.dependencies import get_data_storage
+from src.dependencies import get_active_data_storage
 from src.utils import report_error
 
 # Create router for user messages
@@ -40,7 +40,7 @@ async def answer(message: Message):
     :return:
     """
 
-    storage: Storage = get_data_storage()
+    storage: Storage = get_active_data_storage()
 
     # Create ChatMessageDTO object
     try:

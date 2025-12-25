@@ -17,14 +17,21 @@ class LLMProviderType(str, Enum):
     OPENAI = "OpenAI"
 
 
-class StorageType(str, Enum):
+class ActiveStorageType(str, Enum):
     """
-    Data storage selection class
+    Active data storage selection class
     """
 
-    MEMORY = "memory"
+    APP_STATE = "app_state"
+    REDIS = "redis"
+
+
+class PersistentStorageType(str, Enum):
+    """
+    Persistent data storage selection class
+    """
+
     JSON = "json"
-    SQLITE = "sqlite"
     POSTGRES = "postgres"
 
 
@@ -57,3 +64,4 @@ MAX_PROMPT_LENGTH = 2000
 MAX_REQUESTS_PER_MINUTE = 10
 MAX_REQUESTS_PER_HOUR = 100
 MAX_REQUESTS_PER_DAY = 1000
+SESSION_LENGTH = 50

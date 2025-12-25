@@ -8,13 +8,13 @@ from src.core.models import (
 )
 from src.core.services.llm import LLMService
 from src.data.storage.dialogs.base import Storage
-from src.dependencies import get_data_storage
+from src.dependencies import get_active_data_storage
 from src.utils import report_error
 
 
 async def chat_message(
         request: ChatRequestDTO,
-        storage: Storage = Depends(get_data_storage)
+        storage: Storage = Depends(get_active_data_storage)
 ) -> ChatResponseDTO:
     """
     Processes incoming request,
