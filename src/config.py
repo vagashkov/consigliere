@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import final
 
 from pydantic import SecretStr
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from src.constants import LLMProviderType
 
@@ -82,11 +82,12 @@ class Settings(BaseSettings):
     TELEGRAM_WEBHOOK_URL: str = ""
     DISABLE_PENDING_MESSAGES: bool = True
 
-    class Config:
-        env_file = ENV_FILE_PATH
-        env_file_encoding = ENV_FILE_ENCODING
-        case_sensitive = True
-        extra = "ignore"
+    model_config = SettingsConfigDict(
+        env_file=ENV_FILE_PATH,
+        env_file_encoding=ENV_FILE_ENCODING,
+        case_sensitive=True,
+        extra="ignore"
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
