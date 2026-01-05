@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from fastapi.responses import JSONResponse
 from httpx import AsyncClient, HTTPStatusError, RequestError
 from pydantic import TypeAdapter, ValidationError as PydanticError
@@ -71,7 +73,6 @@ class OllamaClient(LLMClient):
             async with AsyncClient() as client:
                 response = await client.post(
                     PULL_MODEL_URL,
-                    # timeout is big enough to load LLM into memory
                     timeout=10.0,
                     json={
                         "model": "{}:{}".format(model_name, model_version)
@@ -79,7 +80,10 @@ class OllamaClient(LLMClient):
                 )
                 response.raise_for_status()
             return JSONResponse(
-                content={}, status_code=201
+                content={
+                    "model_name": model_name,
+                    "model_version": model_version
+                }, status_code=HTTPStatus.ACCEPTED
             )
         except Exception as e:
             report_error(str(e))
@@ -96,7 +100,6 @@ class OllamaClient(LLMClient):
                 response = await client.request(
                     HTTPMethod.DELETE,
                     DELETE_MODEL_URL,
-                    # timeout is big enough to load LLM into memory
                     timeout=10.0,
                     json={
                         "model": "{}:{}".format(model_name, model_version)
@@ -104,7 +107,10 @@ class OllamaClient(LLMClient):
                 )
                 response.raise_for_status()
             return JSONResponse(
-                content={}, status_code=201
+                content={
+                    "model_name": model_name,
+                    "model_version": model_version
+                }, status_code=HTTPStatus.ACCEPTED
             )
         except Exception as e:
             report_error(str(e))
