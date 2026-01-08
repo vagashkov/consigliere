@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from fastapi.testclient import TestClient
+import pytest
 
 from src.api.v1.main import app
 from src.api.v1.routes.admin import get_llm_service
@@ -12,7 +13,9 @@ client = TestClient(app)
 MODEL_NAME = "test_model"
 MODEL_VERSION = "0.1.0"
 
-def test_list_all_models():
+
+@pytest.mark.asyncio
+async def test_list_all_models():
     """
     Test the 'list all models' endpoint
     """
@@ -33,7 +36,8 @@ def test_list_all_models():
         assert model in data
 
 
-def test_list_active_models():
+@pytest.mark.asyncio
+async def test_list_active_models():
     """
     Test the 'list active models' endpoint
     """
@@ -54,7 +58,8 @@ def test_list_active_models():
         assert model in data
 
 
-def test_pull_model():
+@pytest.mark.asyncio
+async def test_pull_model():
     """
     Test the 'pull model' endpoint
     """
@@ -78,7 +83,8 @@ def test_pull_model():
     }
 
 
-def test_delete_model():
+@pytest.mark.asyncio
+async def test_delete_model():
     """
     Test the 'delete model' endpoint
     """
@@ -100,4 +106,3 @@ def test_delete_model():
         "model_name": MODEL_NAME,
         "model_version": MODEL_VERSION
     }
-

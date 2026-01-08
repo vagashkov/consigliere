@@ -8,13 +8,14 @@ from src.core.models import (
 )
 from src.core.services.llm import LLMService
 from src.data.storage.dialogs.base import Storage
-from src.dependencies import get_active_data_storage
+from src.dependencies import get_llm_service, get_active_data_storage
 from src.utils import report_error
 
 
 async def chat_message(
         request: ChatRequestDTO,
-        storage: Storage = Depends(get_active_data_storage)
+        llm_service: LLMService = Depends(get_llm_service),
+        storage: Storage = Depends(get_active_data_storage),
 ) -> ChatResponseDTO:
     """
     Processes incoming request,
@@ -38,7 +39,7 @@ async def chat_message(
         report_error(str(e))
 
     # Forward request to LLM
-    response_text = await LLMService().generate(
+    response_text = await llm_service.generate(
         request.session_id,
         request.content,
     )

@@ -3,7 +3,7 @@ from src.constants import (
     LLMProviderType, KnowledgeBaseType,
     ActiveStorageType, PersistentStorageType
 )
-
+from src.core.services.llm import LLMService
 from src.data.llm.client import LLMClient
 from src.data.llm.ollama.client import OllamaClient
 from src.data.llm.openai.client import OpenAIClient
@@ -16,6 +16,10 @@ from src.data.storage.knowledge.base import KnowledgeBaseLoader
 from src.data.storage.knowledge.raw_text import RawTextLoader
 
 settings = get_settings()
+
+
+def get_llm_service() -> LLMService:
+    return LLMService()
 
 
 def get_llm_client() -> LLMClient:

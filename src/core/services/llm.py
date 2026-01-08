@@ -1,6 +1,9 @@
+from http import HTTPStatus
 from typing import List
 
-from src.dependencies import get_llm_client
+from fastapi import HTTPException
+
+import src.dependencies as dependencies
 from src.core.models import LLModelDTO
 from src.core.services.validator import prompt_validator
 
@@ -12,7 +15,7 @@ class LLMService:
 
     def __init__(self):
         super().__init__()
-        self.client = get_llm_client()
+        self.client = dependencies.get_llm_client()
 
     async def list_models(self, active: bool = False) -> List[LLModelDTO]:
         """
@@ -54,7 +57,10 @@ class LLMService:
         ) = prompt_validator.check_rate_limit(session_id)
 
         if validation_failed:
-            return "Rate limit exceeded: {}".format(description)
+            raise HTTPException(
+                status_code=HTTPStatus.TOO_MANY_REQUESTS,
+                detail="Rate limit exceeded: {}".format(description)
+            )
 
         # Check prompt for maliciousness before sending it to the model
         (
@@ -62,6 +68,9 @@ class LLMService:
         ) = prompt_validator.validate_prompt(prompt)
 
         if validation_failed:
-            return "Prompt validation error: {}".format(description)
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Prompt validation error: {}".format(description)
+            )
 
         return await self.client.generate(session_id, prompt)

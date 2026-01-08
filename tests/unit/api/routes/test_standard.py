@@ -1,12 +1,14 @@
 from http import HTTPStatus
 from fastapi.testclient import TestClient
+import pytest
 
 from src.api.v1.main import app
 
 client = TestClient(app)
 
 
-def test_health_check():
+@pytest.mark.asyncio
+async def test_health_check():
     """
     Test the health check endpoint
     """
@@ -18,7 +20,8 @@ def test_health_check():
     assert data["status"] == "healthy"
 
 
-def test_index_page():
+@pytest.mark.asyncio
+async def test_index_page():
     """
     Test the index page retrieval
     """

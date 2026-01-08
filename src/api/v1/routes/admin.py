@@ -3,12 +3,9 @@ from typing import List
 
 
 from src.constants import HTTPMethod
+from src.dependencies import get_llm_service
 from src.core.models import LLModelDTO
 from src.core.services.llm import LLMService
-
-
-def get_llm_service() -> LLMService:
-    return LLMService()
 
 
 async def list_all_models(
