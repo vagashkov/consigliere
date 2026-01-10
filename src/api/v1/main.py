@@ -14,6 +14,7 @@ from src.api.v1.routes.standard import router as standard_router
 from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
+from src.constants import ActiveStorageType
 from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
 import src.dependencies as dependencies
 
@@ -25,6 +26,15 @@ persistent_storage: PersistentStorage = dependencies.get_persistent_data_storage
 # Use webhook mode for Telegram bot
 @asynccontextmanager
 async def lifespan(application: FastAPI):
+    """
+    Application lifespan management routine:
+    On app startup:
+    - enables Telegram bot
+    On app shutdown:
+    - disables Telegram bot
+    :param application:
+    :return:
+    """
     await bot.set_webhook(
         url=settings.TELEGRAM_WEBHOOK_URL,
         allowed_updates=dp.resolve_used_update_types(),
@@ -34,12 +44,20 @@ async def lifespan(application: FastAPI):
     await bot.delete_webhook()
     await memory_storage.save_all_sessions(persistent_storage)
 
-app = FastAPI(title="Consigliere Web API", lifespan=lifespan)
+app_config = {
+    "title": settings.APP_TITLE,
+    "lifespan": lifespan,
+}
+if settings.ENVIRONMENT.is_deployed:
+    app_config["openapi_url"] = None
 
-app.state.redis = Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=settings.REDIS_DB
+app = FastAPI(**app_config)
+
+if settings.ACTIVE_STORAGE_TYPE == ActiveStorageType.REDIS:
+    app.state.redis = Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB
     )
 
 app.add_middleware(
