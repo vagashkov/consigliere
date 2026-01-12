@@ -3,8 +3,11 @@ from fastapi.testclient import TestClient
 import pytest
 
 from src.api.v1.main import app
-from src.api.v1.routes.admin import get_llm_service
-from tests.mock_objects import get_mock_llm_service, MOCK_ANSWER
+from src.dependencies import get_llm_service, get_active_data_storage
+from tests.mock_objects import (
+    get_mock_llm_service, get_mock_active_data_storage,
+    MOCK_ANSWER
+)
 
 client = TestClient(app)
 
@@ -31,6 +34,7 @@ async def test_prompt_validation(prompt: str, error_message: str):
     """
 
     app.dependency_overrides[get_llm_service] = get_mock_llm_service
+    app.dependency_overrides[get_active_data_storage] = get_mock_active_data_storage
 
     response = client.post(
         "api/v1/chat/message",
@@ -57,6 +61,7 @@ async def test_chat_message_success():
     """
 
     app.dependency_overrides[get_llm_service] = get_mock_llm_service
+    app.dependency_overrides[get_active_data_storage] = get_mock_active_data_storage
 
     response = client.post(
         "api/v1/chat/message",
@@ -83,6 +88,8 @@ async def test_rate_limits():
     """
 
     app.dependency_overrides[get_llm_service] = get_mock_llm_service
+    app.dependency_overrides[get_active_data_storage] = get_mock_active_data_storage
+
     # Send request number 12 (maximum number per minute)
     response = client.post(
         "api/v1/chat/message",

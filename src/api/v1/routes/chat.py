@@ -22,6 +22,7 @@ async def chat_message(
     use AI model to generate response,
     and returns the response.
     :param request:
+    :param llm_service:
     :param storage:
     :return:
     """

@@ -24,6 +24,14 @@ class OllamaClient(LLMClient):
     LLM client implementation for ollama inference engine.
     """
 
+    def __init__(self):
+        """"
+        Ollama client initialization routine
+        """
+
+        self.active_storage = dependencies.get_active_data_storage()
+        self.knowledge_base_loader = dependencies.get_knowledge_base_loader()
+
     async def list_models(self, active: bool = False) -> list[LLModelDTO]:
         # Define necessary inference engine endpoint
         url = LIST_ACTIVE_MODELS_URL if active else LIST_ALL_MODELS_URL
@@ -121,7 +129,7 @@ class OllamaClient(LLMClient):
         :return:
         """
 
-        return dependencies.get_knowledge_base_loader().load_knowledge_base()
+        return self.knowledge_base_loader.load_knowledge_base()
 
     async def _get_system_prompt(self) -> dict:
         """
@@ -155,7 +163,7 @@ class OllamaClient(LLMClient):
 
         if session_id:
             saved_messages = (
-                await dependencies.get_active_data_storage().get_messages(
+                await self.active_storage.get_messages(
                     session_id
                 )
             )
