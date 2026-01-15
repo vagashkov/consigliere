@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  # Redis container
+  redis:
+    container_name: redis
+    image: redis/redis-stack:7.4.0-v8
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    restart: always
+
+  # RDBMS container
+  db:
+    container_name: db
+    image: postgres:14.17-bookworm
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+volumes:
+  postgres_data:
+    external: true

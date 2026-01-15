@@ -20,3 +20,7 @@ In case of using https://hookdeck.com/:
 - launch Hoockdeck CLI, sign in and create new connection using <code>listen</code> command:
 <code>hookdeck listen <port_numbnner> <source_name></code>
 - do not forget to configure webhook URL in consigliere .env file
+
+## Launch routine
+- use docker-compose-local-llm.yml to launch consigliere with local LLM (via Ollama)
+- use docker-compose-remote-llm.yml to launch consigliere with remote OpenAI API-compatible LLM (e.g. via OpenRouter)

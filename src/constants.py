@@ -8,6 +8,13 @@ class HTTPMethod(str, Enum):
     DELETE = "DELETE"
 
 
+class AuthMethod(str, Enum):
+    # Supported authentication methods
+    BASIC = "Basic"
+    BEARER = "Bearer"
+    CUSTOM = "Custom"
+
+
 class LLMProviderType(str, Enum):
     """
     LLM provider selection class
@@ -40,8 +47,10 @@ class ChatRole(str, Enum):
     Chat role election class
     """
 
-    USER = "user"
     SYSTEM = "system"
+    USER = "user"
+    ASSISTANT = "assistant"
+    DEVELOPER = "developer"
 
 
 class KnowledgeBaseType(str, Enum):

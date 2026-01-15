@@ -6,7 +6,7 @@ from typing import final
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.constants import LLMProviderType
+from src.constants import LLMProviderType, AuthMethod
 
 
 # Build path inside the project like this: BASE_DIR / 'subdir'.
@@ -48,13 +48,15 @@ class Settings(BaseSettings):
     LLM_PROVIDER_SCHEMA: str = "http"
     LLM_PROVIDER_HOST: str = "localhost"
     LLM_PROVIDER_PORT: int = 11434
+    LLM_PROVIDER_AUTH_METHOD: AuthMethod = AuthMethod.BEARER
+    LLM_PROVIDER_KEY: SecretStr = ""
 
     # Embedding LLM details
     EMBEDDING_MODEL_NAME: str = "nomic-embed-text"
     EMBEDDING_MODEL_VERSION: str = "latest"
 
     # Generating LLM details
-    GENERATING_MODEL_NAME: str = "gemma3"
+    GENERATING_MODEL_NAME: str = "gpt-3.5-turbo"
     GENERATING_MODEL_VERSION: str = "270m"
     GENERATING_MODEL_TEMPERATURE: float = 0.7
 
