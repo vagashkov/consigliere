@@ -96,7 +96,8 @@ class OpenAIClient(LLMClient):
 
         try:
             async with AsyncClient() as client:
-                # Sending request with all the data (authorization, messages, etc.)
+                # Sending request with all the data
+                # (authorization, messages, etc.)
                 response = await client.post(
                     MODEL_CHAT_URL,
                     headers={
@@ -119,9 +120,10 @@ class OpenAIClient(LLMClient):
         except Exception as e:
             report_error(str(e))
 
-        # Try to parse the response (it may be JSON or text)
+        # Try to parse the response
+        # (it may be JSON or text)
         try:
-            result = response.json()
+            response.json()
         except JSONDecodeError as e:
             report_error(str(e))
             print(response.text)

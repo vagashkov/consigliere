@@ -68,7 +68,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount(
+    "/static",
+    StaticFiles(directory=settings.STATIC_PATH),
+    name="static"
+)
 
 app.include_router(admin_router, prefix="/api/v1/admin")
 app.include_router(chat_router, prefix="/api/v1/chat")

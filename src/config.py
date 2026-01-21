@@ -69,6 +69,7 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
 
     DATA_PATH: Path = ""
+    STATIC_PATH: Path = ""
 
     # Service data storage details
     PERSISTENT_STORAGE_TYPE: str = "json"
@@ -95,8 +96,13 @@ class Settings(BaseSettings):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.DATA_PATH = BASE_DIR.parent / "data"
-        self.SYSTEM_PROMPT_FILE = self.DATA_PATH / "system_prompt.txt"
-        self.KNOWLEDGE_BASE_PATH = self.DATA_PATH / "knowledge"
+        self.STATIC_PATH = BASE_DIR.parent / "static"
+        self.SYSTEM_PROMPT_FILE = (
+                self.DATA_PATH / "knowledge" / "system_prompt.txt"
+        )
+        self.KNOWLEDGE_BASE_PATH = (
+                self.DATA_PATH / "knowledge" / "documents"
+        )
 
 
 @lru_cache()

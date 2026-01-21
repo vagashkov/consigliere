@@ -1,6 +1,22 @@
 version: "3.9"
 
 services:
+  # hookdeck container
+  hookdeck:
+    container_name: hookdeck
+    image: hookdeck/hookdeck-cli:v1.5.0
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        # Check for existing config, log in if needed
+        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
+        # Start the listen command
+        /bin/hookdeck listen app:8000 telegram
+    volumes:
+      - hookdeck_data:/root/.config/hookdeck
+    tty: true
+    restart: always
+
   # Redis container
   redis:
     container_name: redis
@@ -33,8 +49,26 @@ services:
     ports:
       - "11434:11434"
 
+  app:
+    container_name: app
+    build: .
+    volumes:
+      - knowledge_data:/app/data/knowledge
+    ports:
+      - "8000:8000"
+    tty: true
+    depends_on:
+      - redis
+      - hookdeck
+      - db
+      - ollama
+
 volumes:
-  ollama_data:
-    external: true
   postgres_data:
+    external: true
+  hookdeck_data:
+    external: true
+  knowledge_data:
+    external: true
+  ollama_data:
     external: true
