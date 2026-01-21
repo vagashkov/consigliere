@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Demo page for Consigliere Chat Widget">
+    <title>Consigliere - Chat Widget Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #124559 0%, #598392 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            color: #eff6e0;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .content {
+            background: #eff6e0;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #aec3b0;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        code {
+            background: #124559;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        pre {
+            background: #124559;
+            color: #124559;
+            padding: 5px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 5px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #aec3b0;
+        }
+
+        .cta {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #124559 0%, #598392 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: #eff6e0;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+
+        .footer a:visited {
+            text-align: center;
+            color: #eff6e0;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+ </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Consigliere Chat Widget Demo</h1>
+        </header>
+
+        <div class="content">
+            <h2>What is Consigliere?</h2>
+            <p>
+                Consigliere is a multichannel personal AI assistant that can be integrated into any website or most common messengers.
+            </p>
+
+            <h2>Deployment</h2>
+            <p>To deploy chat widget to your site add just one line of code:</p>
+            <pre>
+                <code>
+                    &lt;script src="https://your-server.com/static/js/chat_widget.js"
+                    data-api="https://your-server.com/api/v1"
+                    data-theme="light"
+                    data-position="bottom-right"
+                    data-title="Consigliere"&gt;
+                    &lt;/script&gt;
+                </code>
+            </pre>
+
+            <h2>Enjoy :)</h2>
+            <p>
+                Click the chat button in the bottom-right corner to start communicating with Consigliere.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Consigliere Chat Widget Demo Page</p>
+            <p>Visit <a href="https://github.com/vagashkov/consigliere">Github</a> for details </p>
+        </div>
+    </div>
+
+    <!-- Load the chat widget -->
+    <script src="static/js/chat_widget.js"
+            data-api="http://localhost:8000/api/v1"
+            data-theme="light"
+            data-position="bottom-right"
+            data-title="AI Assistant">
+    </script>
+</body>
+</html>
