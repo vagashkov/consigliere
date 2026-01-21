@@ -1,0 +1,7 @@
+profile = 'default'
+
+[default]
+api_key = 'API_KEY'
+guest_url = ''
+project_id = 'PROJECT_ID'
+project_mode = 'inbound'
