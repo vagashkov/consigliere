@@ -63,8 +63,21 @@ services:
       - db
       - ollama
 
+  # Defines the nginx container, which acts as the API gateway.
+  nginx:
+    container_name: nginx
+    image: nginx:1.29.4-trixie-perl
+    ports:
+      - "80:80"
+    volumes:
+      - nginx_data:/etc/nginx
+    networks:
+      - network
+    depends_on:
+      - app
+
 volumes:
-  postgres_data:
+  nginx_data:
     external: true
   hookdeck_data:
     external: true
@@ -72,3 +85,7 @@ volumes:
     external: true
   ollama_data:
     external: true
+
+
+networks:
+  network:

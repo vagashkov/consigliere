@@ -2,22 +2,22 @@ version: "3.9"
 
 services:
   # hookdeck container
-  # hookdeck:
-  #  container_name: hookdeck
-  #  image: hookdeck/hookdeck-cli:v1.5.0
-  #  entrypoint: ["/bin/sh", "-c"]
-  #  command:
-  #    - |
-  #      # Check for existing config, log in if needed
-  #      [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
-  #      # Start the listen command
-  #      /bin/hookdeck listen app:8000 telegram
-  #  volumes:
-  #    - hookdeck_data:/root/.config/hookdeck
-  #  networks:
-  #    - network
-  #  tty: true
-  #  restart: always
+  hookdeck:
+   container_name: hookdeck
+   image: hookdeck/hookdeck-cli:v1.5.0
+   entrypoint: ["/bin/sh", "-c"]
+   command:
+     - |
+       # Check for existing config, log in if needed
+       [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
+       # Start the listen command
+       /bin/hookdeck listen app:8000 telegram
+   volumes:
+     - hookdeck_data:/root/.config/hookdeck
+   networks:
+     - network
+   tty: true
+   restart: always
 
   # Redis container
   redis:
@@ -54,7 +54,7 @@ services:
     tty: true
     depends_on:
       - redis
-    #  - hookdeck
+      - hookdeck
     #  - db
 
   # Defines the nginx container, which acts as the API gateway.
@@ -73,8 +73,8 @@ services:
 volumes:
 #  postgres_data:
 #    external: true
-#  hookdeck_data:
-#    external: true
+  hookdeck_data:
+    external: true
   knowledge_data:
     external: true
   nginx_data:
