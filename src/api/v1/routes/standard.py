@@ -3,8 +3,6 @@ from fastapi.responses import FileResponse
 
 from src.constants import HTTPMethod
 
-from src.config import settings
-
 
 async def health_check():
     """
@@ -17,7 +15,6 @@ async def index():
     """
     Index page endpoint.
     """
-    print(settings.STATIC_PATH)
     return FileResponse(
         "static/templates/index.html",
         media_type="text/html"

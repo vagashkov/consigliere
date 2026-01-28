@@ -1,6 +1,10 @@
 # consigliere
 Company knowledge analysis and sharing service for both internal and external users
 
+## Create Docker volumes
+You can create docker volumes manually (see below) or use make_volumes.sh script to create them automatically.
+Just do not forget to change the host destinations in every command.
+
 ## Knowledge base configuration
 - create docker volume knowledge_data to store system prompt, documents etc.
 <code>docker volume create knowledge_data --opt type=none --opt device=<host_destination*> --opt o=bind</code>

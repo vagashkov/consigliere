@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     Project environment settings definition
     """
 
+    BASE_URL: str = ""
     APP_TITLE: str = "AI Assistant"
     APP_VERSION: str = "1.0"
     ENVIRONMENT: Environment = Environment.DEVELOPMENT

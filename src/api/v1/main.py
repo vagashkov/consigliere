@@ -35,6 +35,7 @@ async def lifespan(application: FastAPI):
     :param application:
     :return:
     """
+
     await bot.set_webhook(
         url=settings.TELEGRAM_WEBHOOK_URL,
         allowed_updates=dp.resolve_used_update_types(),
@@ -69,15 +70,27 @@ app.add_middleware(
 )
 
 app.mount(
-    "/static",
+    "{}/static".format(settings.BASE_URL),
     StaticFiles(directory=settings.STATIC_PATH),
     name="static"
 )
 
-app.include_router(admin_router, prefix="/api/v1/admin")
-app.include_router(chat_router, prefix="/api/v1/chat")
-app.include_router(webhooks_router, prefix="/api/v1/webhooks")
-app.include_router(standard_router)
+app.include_router(
+    admin_router,
+    prefix="{}/api/v1/admin".format(settings.BASE_URL)
+)
+app.include_router(
+    chat_router,
+    prefix="{}/api/v1/chat".format(settings.BASE_URL)
+)
+app.include_router(
+    webhooks_router,
+    prefix="{}/api/v1/webhooks".format(settings.BASE_URL)
+)
+app.include_router(
+    standard_router,
+    prefix="{}".format(settings.BASE_URL)
+)
 
 
 @app.exception_handler(HTTPException)
