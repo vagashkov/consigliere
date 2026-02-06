@@ -44,6 +44,15 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0"
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
+    DB_DIALECT: str = "postgresql"
+    DB_DRIVER: str = "psycopg"
+    DB_USERNAME: str = ""
+    DB_PASSWORD: SecretStr = ""
+    DB_HOST: str = "db"
+    DB_PORT: int = 5432
+    DB_NAME: str = ""
+    DATABASE_URL: str = ""
+
     # LLM provider details
     LLM_PROVIDER_TYPE: LLMProviderType = "ollama"
     LLM_PROVIDER_SCHEMA: str = "http"
@@ -104,6 +113,15 @@ class Settings(BaseSettings):
         self.KNOWLEDGE_BASE_PATH = (
                 self.DATA_PATH / "knowledge" / "documents"
         )
+        self.DATABASE_URL = "{}+{}://{}:{}@{}:{}/{}'".format(
+            self.DB_DIALECT,
+            self.DB_DRIVER,
+            self.DB_USERNAME,
+            self.DB_PASSWORD.get_secret_value(),
+            self.DB_HOST,
+            self.DB_PORT,
+            self.DB_NAME
+        )
 
 
 @lru_cache()
@@ -118,7 +136,7 @@ def get_settings() -> Settings:
     except Exception as e:
         if ENV_FILE_PATH.exists():
             raise RuntimeError(
-                "Failed to read .env file"
+                "Failed to read .env file: {}".format(e)
             ) from e
         else:
             raise RuntimeError(

@@ -13,6 +13,7 @@ Just do not forget to change the host destinations in every command.
 ## Postgres DB configuration
 - create docker volume postgres_data to store database files etc:
 <code>docker volume create postgres_data --opt type=none --opt device=<host_destination> --opt o=bind</code>
+- create file postgres.txt with your postgres user password (it will be used in db container)
 
 ## Local LLM configuration
 - create docker volume ollama_data to store models etc. (Be aware that models can be really large so choose host destination carefully):

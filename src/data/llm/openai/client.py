@@ -129,14 +129,16 @@ class OpenAIClient(LLMClient):
             print(response.text)
             return "Model response is not valid JSON."
 
-            # Validate received data
+        # Validate received data
         try:
             answer = OpenAIAPIResponse.model_validate(
                 response.json()
             )
+            return answer.choices[0].message.content
         except PydanticError as e:
+            print(
+                "Model response is not valid OpenAI API response: {}".format(
+                    response.json()
+                )
+            )
             report_error(str(e))
-            print(response.json())
-            return "Model response is not valid OpenAI API response."
-
-        return answer.choices[0].message.content

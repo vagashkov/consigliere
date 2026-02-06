@@ -8,6 +8,7 @@ from src.data.llm.client import LLMClient
 from src.data.llm.ollama.client import OllamaClient
 from src.data.llm.openai.client import OpenAIClient
 
+from src.data.storage.database.postgres import AsyncLocalSession
 from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
 from src.data.storage.dialogs.active.redis import RedisStorage
 from src.data.storage.dialogs.persistent.json import JSONStorage
@@ -57,6 +58,16 @@ def get_persistent_data_storage() -> PersistentStorage:
             return JSONStorage(
                 settings.DATA_PATH
             )
+
+
+async def get_db_session() -> AsyncLocalSession:
+    """
+    Returns live database session object
+    :return:
+    """
+
+    async with AsyncLocalSession() as session:
+        yield session
 
 
 def get_knowledge_base_loader() -> KnowledgeBaseLoader:

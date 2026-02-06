@@ -31,16 +31,23 @@ services:
     restart: always
 
   # RDBMS container
-#  db:
-#    container_name: db
-#    image: postgres:14.17-bookworm
-#    restart: always
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-#    networks:
-#      - network
-#    environment:
-#      POSTGRES_HOST_AUTH_METHOD: trust
+  db:
+    container_name: db
+    image: postgres:14.17-bookworm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - network
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: consigliere
+      POSTGRES_USER: consigliere
+      POSTGRES_PASSWORD: /run/secrets/db_password
+    secrets:
+      - db_password
+    restart: always
 
   app:
     container_name: app
@@ -55,7 +62,7 @@ services:
     depends_on:
       - redis
       - hookdeck
-    #  - db
+      - db
 
   # Defines the nginx container, which acts as the API gateway.
   nginx:
@@ -71,8 +78,8 @@ services:
       - app
 
 volumes:
-#  postgres_data:
-#    external: true
+  postgres_data:
+    external: true
   hookdeck_data:
     external: true
   knowledge_data:
@@ -82,3 +89,7 @@ volumes:
 
 networks:
   network:
+
+secrets:
+   db_password:
+     file: postgres.txt

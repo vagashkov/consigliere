@@ -3,24 +3,28 @@ version: "3.9"
 services:
   # hookdeck container
   hookdeck:
-    container_name: hookdeck
-    image: hookdeck/hookdeck-cli:v1.5.0
-    entrypoint: [ "/bin/sh", "-c" ]
-    command:
-      - |
-        # Check for existing config, log in if needed
-        [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
-        # Start the listen command
-        /bin/hookdeck listen app:8000 telegram
-    volumes:
-      - hookdeck_data:/root/.config/hookdeck
-    tty: true
-    restart: always
+   container_name: hookdeck
+   image: hookdeck/hookdeck-cli:v1.5.0
+   entrypoint: ["/bin/sh", "-c"]
+   command:
+     - |
+       # Check for existing config, log in if needed
+       [ -f $HOME/.config/hookdeck/config.toml ] && echo "Hookdeck config found!" || /bin/hookdeck login
+       # Start the listen command
+       /bin/hookdeck listen app:8000 telegram
+   volumes:
+     - hookdeck_data:/root/.config/hookdeck
+   networks:
+     - network
+   tty: true
+   restart: always
 
   # Redis container
   redis:
     container_name: redis
     image: redis/redis-stack:7.4.0-v8
+    networks:
+      - network
     ports:
       - "6379:6379"
       - "8001:8001"
@@ -30,11 +34,20 @@ services:
   db:
     container_name: db
     image: postgres:14.17-bookworm
-    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - network
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: consigliere
+      POSTGRES_USER: consigliere
+      POSTGRES_PASSWORD: /run/secrets/db_password
+    secrets:
+      - db_password
+    restart: always
 
   # LLM provider
   ollama:
@@ -54,6 +67,8 @@ services:
     build: .
     volumes:
       - knowledge_data:/app/data/knowledge
+    networks:
+      - network
     ports:
       - "8000:8000"
     tty: true
@@ -77,15 +92,20 @@ services:
       - app
 
 volumes:
-  nginx_data:
+  postgres_data:
     external: true
   hookdeck_data:
     external: true
   knowledge_data:
     external: true
+  nginx_data:
+    external: true
   ollama_data:
     external: true
 
-
 networks:
   network:
+
+secrets:
+   db_password:
+     file: postgres.txt

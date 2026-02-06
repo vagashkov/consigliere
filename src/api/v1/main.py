@@ -15,6 +15,7 @@ from src.api.v1.routes.webhooks import router as webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
 from src.constants import ActiveStorageType
+from src.data.storage.database.postgres import init_db
 from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
 import src.dependencies as dependencies
 
@@ -53,6 +54,11 @@ if settings.ENVIRONMENT.is_deployed:
     app_config["openapi_url"] = None
 
 app = FastAPI(**app_config)
+
+
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
 
 if settings.ACTIVE_STORAGE_TYPE == ActiveStorageType.REDIS:
     app.state.redis = Redis(
