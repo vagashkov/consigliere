@@ -113,7 +113,7 @@ class Settings(BaseSettings):
         self.KNOWLEDGE_BASE_PATH = (
                 self.DATA_PATH / "knowledge" / "documents"
         )
-        self.DATABASE_URL = "{}+{}://{}:{}@{}:{}/{}'".format(
+        self.DATABASE_URL = "{}+{}://{}:{}@{}:{}/{}".format(
             self.DB_DIALECT,
             self.DB_DRIVER,
             self.DB_USERNAME,

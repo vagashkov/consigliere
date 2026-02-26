@@ -17,6 +17,7 @@ from src.config import get_settings
 from src.constants import ActiveStorageType
 from src.data.storage.database.postgres import init_db
 from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
+from src.utils import log_message
 import src.dependencies as dependencies
 
 settings = get_settings()
@@ -37,11 +38,17 @@ async def lifespan(application: FastAPI):
     :return:
     """
 
+    log_message("Initializing database...")
+    await init_db()
+    log_message("Database initialization complete")
+
+    log_message("Setting webhooks...")
     await bot.set_webhook(
         url=settings.TELEGRAM_WEBHOOK_URL,
         allowed_updates=dp.resolve_used_update_types(),
         drop_pending_updates=True
     )
+    log_message("Webhooks setup finished")
     yield
     await bot.delete_webhook()
     await memory_storage.save_all_sessions(persistent_storage)
@@ -55,10 +62,6 @@ if settings.ENVIRONMENT.is_deployed:
 
 app = FastAPI(**app_config)
 
-
-@app.on_event("startup")
-async def on_startup():
-    await init_db()
 
 if settings.ACTIVE_STORAGE_TYPE == ActiveStorageType.REDIS:
     app.state.redis = Redis(

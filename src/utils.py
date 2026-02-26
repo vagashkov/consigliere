@@ -38,3 +38,12 @@ def report_error(error_text: str) -> None:
         status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
         detail=error_text
     )
+
+
+def log_message(message_text: str) -> None:
+    """
+    Routine for uniform messages logging
+    :param message_text:
+    :return:
+    """
+    logger.log(msg=message_text, level=logging.INFO)
