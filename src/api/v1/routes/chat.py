@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
+from starlette import status
 
 from src.constants import ChatRole, HTTPMethod
 from src.core.models import (
@@ -68,5 +69,6 @@ router.add_api_route(
     "/message",
     endpoint=chat_message,
     methods=[HTTPMethod.POST],
+    status_code=status.HTTP_202_ACCEPTED,
     summary="Processes single chat message"
 )
