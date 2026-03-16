@@ -63,9 +63,9 @@ async def chat_message(
     )
 
 
-router = APIRouter()
+chat_router = APIRouter()
 
-router.add_api_route(
+chat_router.add_api_route(
     "/message",
     endpoint=chat_message,
     methods=[HTTPMethod.POST],

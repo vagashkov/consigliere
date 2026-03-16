@@ -1,6 +1,30 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 from datetime import datetime
+
+
+class LLMProviderRequestDTO(BaseModel):
+    """
+    Single create LLM provider data transfer object
+    """
+
+    name: str = Field(min_length=3, max_length=255)
+    url: str = Field(min_length=3, max_length=255)
+    port: int = Field(ge=1, le=65535)
+    description: str = Field(min_length=3, max_length=255)
+
+
+class LLMProviderResponseDTO(BaseModel):
+    """
+    Single LLM provider data transfer object
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    url: str
+    port: int
+    description: str
 
 
 class LLModelDTO(BaseModel):

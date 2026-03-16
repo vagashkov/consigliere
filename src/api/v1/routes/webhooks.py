@@ -15,9 +15,9 @@ async def telegram_webhook(request: Request) -> None:
     )
     await dp.feed_update(bot, update)
 
-router = APIRouter()
+webhooks_router = APIRouter()
 
-router.add_api_route(
+webhooks_router.add_api_route(
     "/telegram",
     endpoint=telegram_webhook,
     methods=[HTTPMethod.POST],

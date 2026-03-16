@@ -21,16 +21,16 @@ async def index():
         media_type="text/html"
     )
 
-router = APIRouter()
+standard_router = APIRouter()
 
-router.add_api_route(
+standard_router.add_api_route(
     "/health",
     endpoint=health_check,
     methods=[HTTPMethod.GET],
     status_code=status.HTTP_200_OK,
     summary="Service availability endpoint"
 )
-router.add_api_route(
+standard_router.add_api_route(
     "/",
     endpoint=index,
     methods=[HTTPMethod.GET],

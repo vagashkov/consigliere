@@ -57,30 +57,30 @@ async def delete_model(
     return await llm_service.delete_model(model_name, model_version)
 
 
-router = APIRouter()
+llmodels_admin_router = APIRouter()
 
-router.add_api_route(
+llmodels_admin_router.add_api_route(
     "/models",
     endpoint=list_all_models,
     methods=[HTTPMethod.GET],
     status_code=status.HTTP_200_OK,
     summary="Returns all available LLMs (incl. aliases)"
 )
-router.add_api_route(
+llmodels_admin_router.add_api_route(
     "/models/active",
     endpoint=list_active_models,
     methods=[HTTPMethod.GET],
     status_code=status.HTTP_200_OK,
     summary="Returns active LLMs only (incl. aliases)"
 )
-router.add_api_route(
+llmodels_admin_router.add_api_route(
     "/models/pull/{model_name}/{model_version}",
     endpoint=pull_model,
     methods=[HTTPMethod.GET],
     status_code=status.HTTP_200_OK,
     summary="Pulls a model with specified name and version"
 )
-router.add_api_route(
+llmodels_admin_router.add_api_route(
     "/models/{model_name}/{model_version}",
     endpoint=delete_model,
     methods=[HTTPMethod.DELETE],

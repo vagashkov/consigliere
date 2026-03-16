@@ -8,10 +8,11 @@ from fastapi.staticfiles import StaticFiles
 
 from redis import Redis
 
-from src.api.v1.routes.admin import router as admin_router
-from src.api.v1.routes.chat import router as chat_router
-from src.api.v1.routes.standard import router as standard_router
-from src.api.v1.routes.webhooks import router as webhooks_router
+from src.api.v1.routes.admin.llmodels import llmodels_admin_router
+from src.api.v1.routes.admin.llm_providers import llm_providers_admin_router
+from src.api.v1.routes.chat import chat_router
+from src.api.v1.routes.standard import standard_router
+from src.api.v1.routes.webhooks import webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
 from src.constants import ActiveStorageType
@@ -85,8 +86,12 @@ app.mount(
 )
 
 app.include_router(
-    admin_router,
-    prefix="{}/api/v1/admin".format(settings.BASE_URL)
+    llmodels_admin_router,
+    prefix="{}/api/v1/admin/llm/models".format(settings.BASE_URL)
+)
+app.include_router(
+    llm_providers_admin_router,
+    prefix="{}/api/v1/admin/llm/providers".format(settings.BASE_URL)
 )
 app.include_router(
     chat_router,
