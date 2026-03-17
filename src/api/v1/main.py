@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from redis import Redis
 
-from src.api.v1.routes.admin.llmodels import llmodels_admin_router
+from src.api.v1.routes.admin.llms import llm_admin_router
 from src.api.v1.routes.admin.llm_providers import llm_providers_admin_router
 from src.api.v1.routes.chat import chat_router
 from src.api.v1.routes.standard import standard_router
@@ -86,7 +86,7 @@ app.mount(
 )
 
 app.include_router(
-    llmodels_admin_router,
+    llm_admin_router,
     prefix="{}/api/v1/admin/llm/models".format(settings.BASE_URL)
 )
 app.include_router(

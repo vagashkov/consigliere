@@ -5,32 +5,32 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
 from typing import List
 
-from src.core.models import LLMProviderRequestDTO, LLMProviderResponseDTO
+from src.core.models import LLMRequestDTO, LLMResponseDTO
 from src.core.services.base import DBEnabledService
-from src.data.storage.database.models import LLMProvider
+from src.data.storage.database.models import LLModel
 
 
-class LLMProvidersService(DBEnabledService):
+class LLMService(DBEnabledService):
     """"
-    Manages LLM providers (both local and external) lifecycle
+    Manages LL models (both local and remote) lifecycle
     """
 
-    async def add_llm_provider(
+    async def add_llm(
             self,
-            provider_dto: LLMProviderRequestDTO
-    ) -> LLMProviderResponseDTO:
+            llm_dto: LLMRequestDTO
+    ) -> LLMResponseDTO:
         """
-        Adds new LLM provider
-        :param provider_dto:
+        Adds new LLM
+        :param llm_dto:
         :return:
         """
 
         # Build model object instance
-        provider: LLMProvider = LLMProvider(**provider_dto.model_dump())
+        llm: LLModel = LLModel(**llm_dto.model_dump())
 
         try:
             # Add object to session and save it to database
-            self.session.add(provider)
+            self.session.add(llm)
             await self.session.commit()
         except IntegrityError as e:
             # Handle integrity errors (e.g., duplicate key)
@@ -58,21 +58,21 @@ class LLMProvidersService(DBEnabledService):
 
         # Return newly created object
         try:
-            return LLMProviderResponseDTO.model_validate(provider)
+            return LLMResponseDTO.model_validate(llm)
         except ValidationError as e:
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail=f"Database object validation error: {e}"
             )
 
-    async def list_all_llm_providers(self) -> List[LLMProviderResponseDTO]:
+    async def list_all_llms(self) -> List[LLMResponseDTO]:
         """
-        Returns all LLM providers (incl. non-active)
+        Returns all LLMs
         :return:
         """
         #
         try:
-            providers_list = await self.session.scalars(select(LLMProvider))
+            llms_list = await self.session.scalars(select(LLModel))
         except OperationalError as e:
             # raise a relevant HTTPException
             raise HTTPException(
@@ -88,9 +88,9 @@ class LLMProvidersService(DBEnabledService):
 
         try:
             return [
-                LLMProviderResponseDTO.model_validate(provider)
-                for provider
-                in providers_list.all()
+                LLMResponseDTO.model_validate(llm)
+                for llm
+                in llms_list.all()
                 ]
         except ValidationError as e:
             raise HTTPException(
@@ -98,18 +98,18 @@ class LLMProvidersService(DBEnabledService):
                 detail=f"Database object validation error: {e}"
             )
 
-    async def get_llm_provider_data(
-            self, provider_id: int
-    ) -> LLMProviderResponseDTO:
+    async def get_llm_data(
+            self, llm_id: int
+    ) -> LLMResponseDTO:
         """
-        Returns LLM provider details
+        Returns LLM details
         :return:
         """
         #
         try:
-            provider: LLMProvider = await self.session.scalar(
-                select(LLMProvider).filter(
-                    LLMProvider.id == provider_id
+            llm: LLModel = await self.session.scalar(
+                select(LLModel).filter(
+                    LLModel.id == llm_id
                 ).limit(1)
             )
         except OperationalError as e:
@@ -126,33 +126,35 @@ class LLMProvidersService(DBEnabledService):
             )
 
         # Check if provider is found
-        if not provider:
+        if not llm:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"LLM provider with {provider_id} ID is not found"
+                detail=f"LLM provider with {llm_id} ID is not found"
             )
 
         # Return result
         try:
-            return LLMProviderResponseDTO.model_validate(provider)
+            return LLMResponseDTO.model_validate(llm)
         except ValidationError as e:
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail=f"Database object validation error: {e}"
             )
 
-    async def put_llm_provider_data(
-            self, provider_id: int, provider_dto: LLMProviderRequestDTO
-    ) -> LLMProviderResponseDTO:
+    async def put_llm_data(
+            self, llm_id: int, llm_dto: LLMRequestDTO
+    ) -> LLMResponseDTO:
         """
-        Updates LLM provider details
+        Updates LLM details
+        :param: llm_id
+        :param: llm_dto
         :return:
         """
-        #
+        # Getting LLM object from database
         try:
-            provider: LLMProvider = await self.session.scalar(
-                select(LLMProvider).filter(
-                    LLMProvider.id == provider_id
+            llm: LLModel = await self.session.scalar(
+                select(LLModel).filter(
+                    LLModel.id == llm_id
                 ).limit(1)
             )
         except OperationalError as e:
@@ -169,21 +171,22 @@ class LLMProvidersService(DBEnabledService):
             )
 
         # Check if provider is found
-        if not provider:
+        if not llm:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"LLM provider with {provider_id} ID is not found"
+                detail=f"LLM provider with {llm_id} ID is not found"
             )
 
         # Update provider object data
-        provider.name = provider_dto.name
-        provider.url = provider_dto.url
-        provider.port = provider_dto.port
-        provider.description = provider_dto.description
+        llm.name = llm_dto.name
+        llm.size = llm_dto.size
+        llm.format = llm_dto.format
+        llm.parameters = llm_dto.parameters
+        llm.quantization_level = llm_dto.quantization_level
 
         try:
             # Add object to session and save it to database
-            self.session.add(provider)
+            self.session.add(llm)
             await self.session.commit()
         except IntegrityError as e:
             # Handle integrity errors (e.g., duplicate key)
@@ -211,23 +214,24 @@ class LLMProvidersService(DBEnabledService):
 
         # Return updated object
         try:
-            return LLMProviderResponseDTO.model_validate(provider)
+            return LLMResponseDTO.model_validate(llm)
         except ValidationError as e:
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail=f"Database object validation error: {e}"
             )
 
-    async def delete_llm_provider(self, provider_id: int) -> None:
+    async def delete_llm(self, llm_id: int) -> None:
         """
-        Deletes LLM providers from database
+        Deletes LLM data from database
+        :param: llm_id
         :return:
         """
-        # Getting designated provider object
+        # Getting LLM object from database
         try:
-            provider: LLMProvider = await self.session.scalar(
-                select(LLMProvider).filter(
-                    LLMProvider.id == provider_id
+            llm: LLModel = await self.session.scalar(
+                select(LLModel).filter(
+                    LLModel.id == llm_id
                 ).limit(1)
             )
         except OperationalError as e:
@@ -244,15 +248,15 @@ class LLMProvidersService(DBEnabledService):
             )
 
         # Check if provider is found
-        if not provider:
+        if not llm:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"LLM provider with {provider_id} ID is not found"
+                detail=f"LLM with {llm_id} ID is not found"
             )
 
         try:
             # Add object to session and save it to database
-            await self.session.delete(provider)
+            await self.session.delete(llm)
             await self.session.commit()
         except IntegrityError as e:
             # Handle integrity errors (e.g., duplicate key)

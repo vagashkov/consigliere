@@ -5,7 +5,7 @@ from datetime import datetime
 
 class LLMProviderRequestDTO(BaseModel):
     """
-    Single create LLM provider data transfer object
+    Single LLM provider create/update data transfer object
     """
 
     name: str = Field(min_length=3, max_length=255)
@@ -16,7 +16,7 @@ class LLMProviderRequestDTO(BaseModel):
 
 class LLMProviderResponseDTO(BaseModel):
     """
-    Single LLM provider data transfer object
+    Single LLM provider get data transfer object
     """
     model_config = ConfigDict(from_attributes=True)
 
@@ -27,10 +27,38 @@ class LLMProviderResponseDTO(BaseModel):
     description: str
 
 
+class LLMRequestDTO(BaseModel):
+    """
+    Single LLM create/update data transfer object
+    """
+
+    name: str
+    size: int
+    format: str
+    parameters: str
+    quantization_level: str
+
+
 class LLModelDTO(BaseModel):
     """
-    Single LLM data transfer object
+    ToDo: LEGACY CLASS TO BE REFACTORED
+    Single LLM create/update data transfer object
     """
+
+    name: str
+    size: int
+    format: str
+    parameters: str
+    quantization_level: str
+
+
+class LLMResponseDTO(BaseModel):
+    """
+    Single LLM get data transfer object
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
     name: str
     size: int
     format: str

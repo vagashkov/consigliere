@@ -62,16 +62,21 @@ class LLMProvider(BaseModel):
         return f"{self.name} ({self.url}:{self.port})"
 
 
-# class LLModel(BaseModel):
-#     """
-#     Model for LLM model settings
-#     """
-#
-#     name: Mapped[str] = mapped_column(String(64))
-#     size: Mapped[int] = mapped_column(Integer)
-#     format: Mapped[str] = mapped_column(String(64))
-#     parameters: Mapped[str] = mapped_column(String(64))
-#     quantization_level: Mapped[str] = mapped_column(String(64))
-#
-#     def __repr__(self):
-#         return f"{self.name} model"
+class LLModel(BaseModel):
+    """
+    Model for LLM model settings
+    """
+
+    name: Mapped[str] = mapped_column(String(64))
+    size: Mapped[int] = mapped_column(
+        Integer,
+        CheckConstraint(
+            "size > 0",
+            name="min_llm_size_check")
+    )
+    format: Mapped[str] = mapped_column(String(64))
+    parameters: Mapped[str] = mapped_column(String(64))
+    quantization_level: Mapped[str] = mapped_column(String(64))
+
+    def __repr__(self):
+        return f"{self.name} model"
