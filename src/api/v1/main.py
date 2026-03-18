@@ -10,6 +10,7 @@ from redis import Redis
 
 from src.api.v1.routes.admin.llms import llm_admin_router
 from src.api.v1.routes.admin.llm_providers import llm_providers_admin_router
+from src.api.v1.routes.auth import users_router
 from src.api.v1.routes.chat import chat_router
 from src.api.v1.routes.standard import standard_router
 from src.api.v1.routes.webhooks import webhooks_router
@@ -92,6 +93,10 @@ app.include_router(
 app.include_router(
     llm_providers_admin_router,
     prefix="{}/api/v1/admin/llm/providers".format(settings.BASE_URL)
+)
+app.include_router(
+    users_router,
+    prefix="{}/api/v1/auth".format(settings.BASE_URL)
 )
 app.include_router(
     chat_router,

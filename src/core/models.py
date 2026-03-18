@@ -3,6 +3,29 @@ from typing import List, Optional
 from datetime import datetime
 
 
+class UserRequestDTO(BaseModel):
+    """
+    User create/update data transfer object
+    """
+
+    email: str = Field(min_length=3, max_length=255)
+    password: str = Field(min_length=3, max_length=32)
+    role: str = Field(min_length=3, max_length=32)
+
+
+class UserResponseDTO(BaseModel):
+    """
+    User get data transfer object
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    is_active: bool
+    role: str
+
+
 class LLMProviderRequestDTO(BaseModel):
     """
     Single LLM provider create/update data transfer object

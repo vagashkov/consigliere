@@ -1,6 +1,13 @@
 from enum import Enum
 
 
+class UserRole(str, Enum):
+    # Supported user
+    ADMIN = "admin"
+    STAFF = "staff"
+    USER = "user"
+
+
 class HTTPMethod(str, Enum):
     # Supported HTTP methods
     GET = "GET"

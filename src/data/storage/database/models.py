@@ -1,9 +1,13 @@
-from sqlalchemy import MetaData, Integer, String, DateTime, CheckConstraint
+from sqlalchemy import (
+    MetaData, Integer, String, Enum, DateTime, ForeignKey, CheckConstraint
+)
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import (
     DeclarativeBase, Mapped, mapped_column, declared_attr
 )
 from sqlalchemy.sql import func
+
+from src.constants import UserRole
 
 
 class BaseModel(AsyncAttrs, DeclarativeBase):
@@ -26,7 +30,7 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
     })
 
     id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
+        Integer, primary_key=True, autoincrement=True, index=True
     )
     created_at: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
@@ -42,6 +46,31 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
         :return:
         """
         return f"{cls.__name__.lower()}s"
+
+
+class User(BaseModel):
+    """
+    Model for user authentication
+    """
+
+    email: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(128))
+    is_active: Mapped[bool] = mapped_column(default=True)
+    role: Mapped[str] = mapped_column(
+        Enum(UserRole),
+        nullable=False,
+        default=UserRole.USER
+    )
+
+
+class UserProfile(BaseModel):
+    """
+    Model for user profile data
+    """
+
+    user: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    first_name: Mapped[str] = mapped_column(String(64))
+    last_name: Mapped[str] = mapped_column(String(64))
 
 
 class LLMProvider(BaseModel):

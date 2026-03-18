@@ -10,6 +10,7 @@ anyio==4.11.0
 async-timeout==5.0.1
 asyncpg==0.31.0
 attrs==25.4.0
+bcrypt==4.0.1
 certifi==2025.11.12
 click==8.3.1
 coverage==7.13.1
@@ -28,6 +29,7 @@ MarkupSafe==3.0.3
 mccabe==0.7.0
 multidict==6.7.0
 packaging==25.0
+passlib==1.7.4
 pluggy==1.6.0
 propcache==0.4.1
 psycopg==3.3.2
