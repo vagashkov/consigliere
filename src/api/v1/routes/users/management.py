@@ -4,7 +4,7 @@ from typing import List
 
 from src.constants import HTTPMethod
 from src.core.models import UserRequestDTO, UserResponseDTO
-from src.core.services.auth import UserService
+from src.core.services.users.management import UserService
 from src.data.storage.database.postgres import AsyncLocalSession
 from src.dependencies import get_db_session
 

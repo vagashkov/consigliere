@@ -44,6 +44,10 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0"
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
 
+    SECRET_KEY: SecretStr = ""
+    JWT_ALGORITHM: str = "HS256"
+    JWT_DURATION: int = 3600
+
     DB_DIALECT: str = "postgresql"
     DB_DRIVER: str = "psycopg"
     DB_USERNAME: str = ""

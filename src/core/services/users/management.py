@@ -139,7 +139,7 @@ class UserService(DBEnabledService):
         if not user_object:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"user provider with {user_id} ID is not found"
+                detail=f"user with {user_id} ID is not found"
             )
 
         # Return result

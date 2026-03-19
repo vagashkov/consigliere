@@ -13,6 +13,14 @@ class UserRequestDTO(BaseModel):
     role: str = Field(min_length=3, max_length=32)
 
 
+class AccessToken(BaseModel):
+    """
+    Access token (JWT etc)
+    """
+    token_type: str
+    token_value: str
+
+
 class UserResponseDTO(BaseModel):
     """
     User get data transfer object
@@ -24,6 +32,23 @@ class UserResponseDTO(BaseModel):
     email: str
     is_active: bool
     role: str
+
+
+class LoginRequestDTO(BaseModel):
+    """
+    User login data transfer object
+    """
+
+    email: str = Field(min_length=3, max_length=255)
+    password: str = Field(min_length=3, max_length=32)
+
+
+class LoginResponseDTO(BaseModel):
+    """
+    User login data transfer object
+    """
+
+    pass
 
 
 class LLMProviderRequestDTO(BaseModel):
