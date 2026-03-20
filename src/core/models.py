@@ -18,7 +18,7 @@ class AccessToken(BaseModel):
     Access token (JWT etc)
     """
     token_type: str
-    token_value: str
+    access_token: str
 
 
 class UserResponseDTO(BaseModel):

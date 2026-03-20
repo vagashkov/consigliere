@@ -17,13 +17,21 @@ class LLMProvidersService(DBEnabledService):
 
     async def add_llm_provider(
             self,
-            provider_dto: LLMProviderRequestDTO
+            provider_dto: LLMProviderRequestDTO,
+            user: dict
     ) -> LLMProviderResponseDTO:
         """
         Adds new LLM provider
         :param provider_dto:
+        :param user:
         :return:
         """
+
+        if not user:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail="Invalid access token"
+            )
 
         # Build model object instance
         provider: LLMProvider = LLMProvider(**provider_dto.model_dump())
@@ -105,7 +113,8 @@ class LLMProvidersService(DBEnabledService):
         Returns LLM provider details
         :return:
         """
-        #
+
+        # Getting designated provider object
         try:
             provider: LLMProvider = await self.session.scalar(
                 select(LLMProvider).filter(
@@ -142,13 +151,27 @@ class LLMProvidersService(DBEnabledService):
             )
 
     async def put_llm_provider_data(
-            self, provider_id: int, provider_dto: LLMProviderRequestDTO
+            self,
+            provider_id: int,
+            provider_dto: LLMProviderRequestDTO,
+            user: dict
     ) -> LLMProviderResponseDTO:
         """
         Updates LLM provider details
+        :param provider_id:
+        :param provider_dto:
+        :param user:
         :return:
         """
-        #
+
+        # Checking user credentials
+        if not user:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail="Invalid access token"
+            )
+
+        # Getting designated provider object
         try:
             provider: LLMProvider = await self.session.scalar(
                 select(LLMProvider).filter(
@@ -218,11 +241,25 @@ class LLMProvidersService(DBEnabledService):
                 detail=f"Database object validation error: {e}"
             )
 
-    async def delete_llm_provider(self, provider_id: int) -> None:
+    async def delete_llm_provider(
+            self,
+            provider_id: int,
+            user: dict
+    ) -> None:
         """
         Deletes LLM providers from database
+        :param provider_id:
+        :param user:
         :return:
         """
+
+        # Checking user credentials
+        if not user:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail="Invalid access token"
+            )
+
         # Getting designated provider object
         try:
             provider: LLMProvider = await self.session.scalar(

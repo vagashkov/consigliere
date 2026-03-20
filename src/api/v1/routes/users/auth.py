@@ -19,7 +19,9 @@ async def login(
 ) -> AccessToken:
     return await AuthService(session).login(form_data)
 
-auth_router = APIRouter()
+auth_router = APIRouter(
+    tags=["auth"]
+)
 
 auth_router.add_api_route(
     "/login",

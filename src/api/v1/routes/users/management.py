@@ -87,7 +87,9 @@ async def delete_user(
     )
 
 
-users_router = APIRouter()
+users_router = APIRouter(
+    tags=["users"]
+)
 
 users_router.add_api_route(
     "/",

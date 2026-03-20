@@ -5,22 +5,25 @@ from typing import List
 from src.constants import HTTPMethod
 from src.core.models import LLMProviderRequestDTO, LLMProviderResponseDTO
 from src.core.services.llm_providers import LLMProvidersService
+from src.core.services.users.auth import get_current_user
 from src.data.storage.database.postgres import AsyncLocalSession
 from src.dependencies import get_db_session
 
 
 async def add_llm_provider(
         provider_dto: LLMProviderRequestDTO,
+        user: dict = Depends(get_current_user),
         session: AsyncLocalSession = Depends(get_db_session)
 ) -> LLMProviderResponseDTO:
     """
     Adds new LLM provider
     :param provider_dto:
+    :param user:
     :param session:
     :return:
     """
     return await LLMProvidersService(session).add_llm_provider(
-        provider_dto
+        provider_dto, user
     )
 
 
@@ -55,35 +58,41 @@ async def get_llm_provider_data(
 async def put_llm_provider_data(
         provider_dto: LLMProviderRequestDTO,
         provider_id: int = Path(gt=0),
+        user: dict = Depends(get_current_user),
         session: AsyncLocalSession = Depends(get_db_session)
         ) -> LLMProviderResponseDTO:
     """
     Updates designated LLM provider details
     :param provider_dto:
     :param provider_id:
+    :param user:
     :param session:
     :return:
     """
 
     return await LLMProvidersService(session).put_llm_provider_data(
         provider_id,
-        provider_dto
+        provider_dto,
+        user
     )
 
 
 async def delete_llm_provider(
         provider_id: int = Path(gt=0),
+        user: dict = Depends(get_current_user),
         session: AsyncLocalSession = Depends(get_db_session)
         ) -> None:
     """
     Deletes designated LLM provider details
     :param provider_id:
+    :param user:
     :param session:
     :return:
     """
 
     return await LLMProvidersService(session).delete_llm_provider(
-        provider_id
+        provider_id,
+        user
     )
 
 

@@ -3,8 +3,10 @@ from fastapi import HTTPException
 from http import HTTPStatus
 
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordRequestForm
-from jose import jwt
+from fastapi.security import (
+    OAuth2PasswordRequestForm, OAuth2PasswordBearer
+)
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
@@ -16,6 +18,47 @@ from src.data.storage.database.models import User
 
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
+
+async def get_current_user(
+        access_token: str = Depends(oauth2_bearer)
+) -> dict:
+    """
+    Access token decode routine
+    :param access_token:
+    :return:
+    """
+
+    try:
+        # Decode payload from token
+        payload = jwt.decode(
+            access_token,
+            settings.SECRET_KEY.get_secret_value(),
+            algorithms=[settings.JWT_ALGORITHM]
+        )
+
+        # Extract user id and email
+        user_email: str = payload.get("sub")
+        user_id: str = payload.get("id")
+
+        # If no email/id - return error
+        if not user_email or not user_id:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail="Invalid access token"
+            )
+
+        # Return user data
+        return {
+            "id": user_id,
+            "email": user_email
+        }
+    except JWTError:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail="Invalid access token"
+        )
 
 
 class AuthService(DBEnabledService):
@@ -90,6 +133,6 @@ class AuthService(DBEnabledService):
         return AccessToken.model_validate(
             {
                 "token_type": "bearer",
-                "token_value": token_value
+                "access_token": token_value
             }
         )
