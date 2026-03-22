@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
 from typing import List
 
+from src.constants import UserRole
 from src.core.models import LLMProviderRequestDTO, LLMProviderResponseDTO
 from src.core.services.base import DBEnabledService
 from src.data.storage.database.models import LLMProvider
@@ -31,6 +32,12 @@ class LLMProvidersService(DBEnabledService):
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,
                 detail="Invalid access token"
+            )
+
+        if user.get("role") != UserRole.ADMIN:
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail="Admin role required"
             )
 
         # Build model object instance
@@ -171,6 +178,12 @@ class LLMProvidersService(DBEnabledService):
                 detail="Invalid access token"
             )
 
+        if user.get("role") != UserRole.ADMIN:
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail="Admin role required"
+            )
+
         # Getting designated provider object
         try:
             provider: LLMProvider = await self.session.scalar(
@@ -258,6 +271,12 @@ class LLMProvidersService(DBEnabledService):
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,
                 detail="Invalid access token"
+            )
+
+        if user.get("role") != UserRole.ADMIN:
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail="Admin role required"
             )
 
         # Getting designated provider object

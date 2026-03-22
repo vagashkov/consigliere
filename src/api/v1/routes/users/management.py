@@ -4,6 +4,8 @@ from typing import List
 
 from src.constants import HTTPMethod
 from src.core.models import UserRequestDTO, UserResponseDTO
+from src.core.services.users.profiles.my_profile import MyProfileService
+from src.core.services.users.auth import get_current_user
 from src.core.services.users.management import UserService
 from src.data.storage.database.postgres import AsyncLocalSession
 from src.dependencies import get_db_session
@@ -50,6 +52,20 @@ async def get_user_data(
     return await UserService(session).get_user_data(
         user_id
     )
+
+
+async def get_my_user_data(
+        user: dict = Depends(get_current_user),
+        session: AsyncLocalSession = Depends(get_db_session)
+        ) -> UserResponseDTO:
+    """
+    Gets designated user details
+    :param user:
+    :param session:
+    :return:
+    """
+
+    return await MyProfileService(session).get_my_user_data(user)
 
 
 async def put_user_data(
@@ -105,6 +121,14 @@ users_router.add_api_route(
     methods=[HTTPMethod.POST],
     status_code=status.HTTP_201_CREATED,
     summary="Saves new User into database"
+)
+
+users_router.add_api_route(
+    "/profile",
+    endpoint=get_my_user_data,
+    methods=[HTTPMethod.GET],
+    status_code=status.HTTP_200_OK,
+    summary="Returns current user data"
 )
 
 users_router.add_api_route(

@@ -21,6 +21,14 @@ class AccessToken(BaseModel):
     access_token: str
 
 
+class ChangePasswordRequestDTO(BaseModel):
+    """
+    Change password DTO
+    """
+    old_password: str = Field(min_length=3, max_length=32)
+    new_password: str = Field(min_length=3, max_length=32)
+
+
 class UserResponseDTO(BaseModel):
     """
     User get data transfer object
