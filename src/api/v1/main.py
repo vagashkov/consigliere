@@ -18,7 +18,6 @@ from src.api.v1.routes.webhooks import webhooks_router
 from src.bots.telegram.main import bot, dp
 from src.config import get_settings
 from src.constants import ActiveStorageType
-from src.data.storage.database.postgres import init_db
 from src.data.storage.dialogs.base import ActiveStorage, PersistentStorage
 from src.utils import log_message
 import src.dependencies as dependencies
@@ -40,10 +39,6 @@ async def lifespan(application: FastAPI):
     :param application:
     :return:
     """
-
-    log_message("Initializing database...")
-    await init_db()
-    log_message("Database initialization complete")
 
     log_message("Setting webhooks...")
     await bot.set_webhook(

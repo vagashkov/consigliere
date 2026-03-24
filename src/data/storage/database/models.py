@@ -53,7 +53,7 @@ class User(BaseModel):
     Model for user authentication
     """
 
-    email: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(64), unique=True)
     password_hash: Mapped[str] = mapped_column(String(128))
     is_active: Mapped[bool] = mapped_column(default=True)
     role: Mapped[str] = mapped_column(
@@ -68,6 +68,8 @@ class UserProfile(BaseModel):
     Model for user profile data
     """
 
+    __tablename__: str = "user_profiles"
+
     user: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     first_name: Mapped[str] = mapped_column(String(64))
     last_name: Mapped[str] = mapped_column(String(64))
@@ -77,6 +79,8 @@ class LLMProvider(BaseModel):
     """
     Model for LLM provider settings
     """
+    __tablename__: str = "llm_providers"
+
     name: Mapped[str] = mapped_column(String(64))
     url: Mapped[str] = mapped_column(String(256))
     port: Mapped[int] = mapped_column(
@@ -95,6 +99,8 @@ class LLModel(BaseModel):
     """
     Model for LLM model settings
     """
+
+    __tablename__ = "llms"
 
     name: Mapped[str] = mapped_column(String(64))
     size: Mapped[int] = mapped_column(
